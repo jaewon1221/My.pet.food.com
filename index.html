@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <!-- 브라우저 캐시 방지 태그 (최신 코드 즉시 반영) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <title>우리아이 맞춤식단 | 퍼스널 푸드 매칭</title>
   
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
@@ -117,13 +123,13 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 결과 카드 (클릭 영역 확립) */
+    /* 결과 카드 스타일 */
     .result-card {
       background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px;
-      display: flex; align-items: center; gap: 12px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.2s;
+      display: flex; align-items: center; gap: 12px; border: 2px solid #eaeaea;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer;
     }
-    .result-card:active { transform: scale(0.98); }
+    .result-card:active { background-color: #f9f9f9; }
     .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; pointer-events: none; }
     .card-info { flex: 1; pointer-events: none; }
     .card-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
@@ -133,7 +139,6 @@
       border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; pointer-events: none;
     }
     
-    /* 로딩 상태 */
     #loadingPage { display: none; text-align: center; padding-top: 80px; }
     .spinner {
       border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
@@ -141,19 +146,16 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* 레시피 상세 모달 (z-index 최상위 9999로 강제 설정) */
+    /* 레시피 모달 스타일 */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9999;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 99999;
       justify-content: center;
       align-items: center;
       padding: 20px;
-    }
-    .modal-overlay.open {
-      display: flex !important;
     }
     .modal-content {
       background: #fff;
@@ -259,11 +261,10 @@
       <div id="page3" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>매칭 레시피입니다</h1>
-          <p class="sub-title">카드를 누르면 상세 레시피를 보실 수 있습니다.</p>
+          <p class="sub-title">👇 카드를 클릭하시면 상세 레시피를 보실 수 있습니다.</p>
         </div>
 
-        <!-- 연어 카드 -->
-        <div class="result-card" onclick="openRecipeModal('salmon')">
+        <div class="result-card" onclick="openModal('salmon')">
           <div class="card-icon">🐟</div>
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
@@ -272,8 +273,7 @@
           <div class="match-tag">98% Match</div>
         </div>
 
-        <!-- 오리 카드 -->
-        <div class="result-card" onclick="openRecipeModal('duck')">
+        <div class="result-card" onclick="openModal('duck')">
           <div class="card-icon">🦆</div>
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
@@ -302,18 +302,18 @@
   </div>
 
   <!-- 레시피 모달 -->
-  <div id="recipeModal" class="modal-overlay" onclick="closeRecipeModal()">
+  <div id="recipeModal" class="modal-overlay" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal()">✕</button>
       <div class="modal-header">
         <div id="modalIcon" class="modal-icon">🐟</div>
         <div class="modal-title">
-          <h3 id="modalTitle">프리미엄 연어 레시피</h3>
-          <p id="modalSub">피부 건강 & 눈물 개선 전용</p>
+          <h3 id="modalTitle">레시피 제목</h3>
+          <p id="modalSub">레시피 설명</p>
         </div>
       </div>
       <div class="modal-body">
-        <p id="modalDesc">상세 설명이 들어가는 자리입니다.</p>
+        <p id="modalDesc">상세 설명</p>
         <ul>
           <li>주재료 <span id="modalIng">-</span></li>
           <li>조단백질 <span id="modalProtein">-</span></li>
@@ -327,7 +327,7 @@
   <script>
     let step = 1;
 
-    const recipeData = {
+    const dataMap = {
       salmon: {
         icon: '🐟',
         title: '프리미엄 연어 레시피',
@@ -350,24 +350,24 @@
       }
     };
 
-    function openRecipeModal(type) {
-      const data = recipeData[type];
-      if (!data) return;
+    function openModal(type) {
+      const item = dataMap[type];
+      if (!item) return;
 
-      document.getElementById('modalIcon').innerText = data.icon;
-      document.getElementById('modalTitle').innerText = data.title;
-      document.getElementById('modalSub').innerText = data.sub;
-      document.getElementById('modalDesc').innerText = data.desc;
-      document.getElementById('modalIng').innerText = data.ing;
-      document.getElementById('modalProtein').innerText = data.protein;
-      document.getElementById('modalFat').innerText = data.fat;
-      document.getElementById('modalCal').innerText = data.cal;
+      document.getElementById('modalIcon').innerText = item.icon;
+      document.getElementById('modalTitle').innerText = item.title;
+      document.getElementById('modalSub').innerText = item.sub;
+      document.getElementById('modalDesc').innerText = item.desc;
+      document.getElementById('modalIng').innerText = item.ing;
+      document.getElementById('modalProtein').innerText = item.protein;
+      document.getElementById('modalFat').innerText = item.fat;
+      document.getElementById('modalCal').innerText = item.cal;
 
-      document.getElementById('recipeModal').classList.add('open');
+      document.getElementById('recipeModal').style.display = 'flex';
     }
 
-    function closeRecipeModal() {
-      document.getElementById('recipeModal').classList.remove('open');
+    function closeModal() {
+      document.getElementById('recipeModal').style.display = 'none';
     }
 
     function handleBtnClick() {
