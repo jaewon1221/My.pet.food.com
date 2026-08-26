@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>우리아이 맞춤식단 | 퍼스널 푸드 매칭</title>
   
-  <!-- 프리텐다드 폰트 적용 -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   
   <style>
@@ -118,23 +117,20 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 결과 카드 (클릭 가능하도록 스타일 추가) */
+    /* 결과 카드 (클릭 영역 확립) */
     .result-card {
       background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.2s;
     }
-    .result-card:hover, .result-card:active {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-    }
-    .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; }
-    .card-info { flex: 1; }
+    .result-card:active { transform: scale(0.98); }
+    .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; pointer-events: none; }
+    .card-info { flex: 1; pointer-events: none; }
     .card-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
     .card-info p { font-size: 0.85rem; color: #777; }
     .match-tag {
       background: #eef5eb; color: var(--primary-color); padding: 5px 8px;
-      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; pointer-events: none;
     }
     
     /* 로딩 상태 */
@@ -145,16 +141,19 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* 레시피 상세 모달 팝업 */
+    /* 레시피 상세 모달 (z-index 최상위 9999로 강제 설정) */
     .modal-overlay {
       display: none;
       position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 200;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999;
       justify-content: center;
       align-items: center;
       padding: 20px;
+    }
+    .modal-overlay.open {
+      display: flex !important;
     }
     .modal-content {
       background: #fff;
@@ -163,26 +162,21 @@
       max-width: 380px;
       padding: 24px;
       position: relative;
-      animation: modalUp 0.3s ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    @keyframes modalUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
     .modal-close {
       position: absolute;
       top: 18px; right: 20px;
       font-size: 1.4rem;
-      background: none; border: none; cursor: pointer; color: #888;
+      background: none; border: none; cursor: pointer; color: #888; padding: 5px;
     }
     .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-icon { font-size: 2.5rem; background: #f8f6f0; padding: 12px; border-radius: 16px; }
     .modal-title h3 { font-size: 1.2rem; font-weight: 800; color: #000; }
     .modal-title p { font-size: 0.85rem; color: var(--primary-color); font-weight: 600; margin-top: 2px; }
     .modal-body { font-size: 0.9rem; color: #444; line-height: 1.6; }
-    .modal-body ul { list-style: none; margin-top: 10px; }
-    .modal-body li { padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+    .modal-body ul { list-style: none; margin-top: 15px; }
+    .modal-body li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
     .modal-body li span { font-weight: 700; color: #222; }
 
   </style>
@@ -195,7 +189,7 @@
     </header>
 
     <div class="app-content">
-      <!-- Page 1: Landing -->
+      <!-- Page 1 -->
       <div id="page1" class="page active">
         <div class="title-area">
           <h1 class="main-title">좋은 거 먹이고 싶은데<br><span class="highlight">어디서 알아보지?</span></h1>
@@ -207,7 +201,7 @@
         </div>
       </div>
 
-      <!-- Page 2: Survey -->
+      <!-- Page 2 -->
       <div id="page2" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">아이의 정보를 입력해 주세요</h1>
@@ -255,20 +249,20 @@
         </div>
       </div>
       
-      <!-- Loading State -->
+      <!-- Loading -->
       <div id="loadingPage">
         <div class="spinner"></div>
         <p style="font-weight:700; font-size:1.1rem;">우리 아이 데이터를<br>정밀 분석 중입니다...</p>
       </div>
 
-      <!-- Page 3: Result -->
+      <!-- Page 3 -->
       <div id="page3" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>매칭 레시피입니다</h1>
-          <p class="sub-title">가장 높은 매칭률을 보이는 퍼스널 푸드입니다.</p>
+          <p class="sub-title">카드를 누르면 상세 레시피를 보실 수 있습니다.</p>
         </div>
 
-        <!-- 연어 레시피 카드 (클릭 이벤트 연결) -->
+        <!-- 연어 카드 -->
         <div class="result-card" onclick="openRecipeModal('salmon')">
           <div class="card-icon">🐟</div>
           <div class="card-info">
@@ -278,7 +272,7 @@
           <div class="match-tag">98% Match</div>
         </div>
 
-        <!-- 오리 레시피 카드 (클릭 이벤트 연결) -->
+        <!-- 오리 카드 -->
         <div class="result-card" onclick="openRecipeModal('duck')">
           <div class="card-icon">🦆</div>
           <div class="card-info">
@@ -298,7 +292,7 @@
       </div>
     </div>
 
-    <!-- 하단 고정 버튼 영역 -->
+    <!-- 버튼 -->
     <div class="btn-area">
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기
@@ -307,8 +301,8 @@
     </div>
   </div>
 
-  <!-- 레시피 상세 모달 -->
-  <div id="recipeModal" class="modal-overlay" onclick="closeRecipeModal(event)">
+  <!-- 레시피 모달 -->
+  <div id="recipeModal" class="modal-overlay" onclick="closeRecipeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeRecipeModal()">✕</button>
       <div class="modal-header">
@@ -319,12 +313,12 @@
         </div>
       </div>
       <div class="modal-body">
-        <p id="modalDesc">신선한 알래스카 연어를 사용하여 풍부한 오메가-3와 6 성분이 피부 알레르기 반응을 완화하고 모질을 모질 개선에 도움을 줍니다.</p>
-        <ul style="margin-top:15px;">
-          <li>주재료 <span id="modalIng">알래스카 생연어, 고구마, 블루베리</span></li>
-          <li>조단백질 <span id="modalProtein">28.0% 이상</span></li>
-          <li>조지방 <span id="modalFat">14.0% 이상</span></li>
-          <li>칼로리 <span id="modalCal">3,650 kcal/kg</span></li>
+        <p id="modalDesc">상세 설명이 들어가는 자리입니다.</p>
+        <ul>
+          <li>주재료 <span id="modalIng">-</span></li>
+          <li>조단백질 <span id="modalProtein">-</span></li>
+          <li>조지방 <span id="modalFat">-</span></li>
+          <li>칼로리 <span id="modalCal">-</span></li>
         </ul>
       </div>
     </div>
@@ -333,14 +327,13 @@
   <script>
     let step = 1;
 
-    // 레시피 데이터 정의
     const recipeData = {
       salmon: {
         icon: '🐟',
         title: '프리미엄 연어 레시피',
         sub: '피부 건강 & 눈물 개선 전용',
         desc: '신선한 알래스카 연어를 사용하여 풍부한 오메가-3 및 6 지방산이 피모 건강을 돕고 알레르기 유발 물질을 최소화하여 눈물 자국을 완화해 줍니다.',
-        ing: '알래스카 생연어, 고구마, 당근, 블루베리',
+        ing: '알래스카 생연어, 고구마, 블루베리',
         protein: '28.0% 이상',
         fat: '14.0% 이상',
         cal: '3,650 kcal/kg'
@@ -350,7 +343,7 @@
         title: '센시티브 오리 레시피',
         sub: '소화 유산균 & 영양 설계',
         desc: '불포화지방산이 풍부한 국내산 오리고기와 체내 흡수율이 높은 생유산균을 배합하여 장 건강을 개선하고 소화 불량을 줄여줍니다.',
-        ing: '국내산 오리가슴살, 단호박, 사과, 유산균',
+        ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
         cal: '3,500 kcal/kg'
@@ -370,11 +363,11 @@
       document.getElementById('modalFat').innerText = data.fat;
       document.getElementById('modalCal').innerText = data.cal;
 
-      document.getElementById('recipeModal').style.display = 'flex';
+      document.getElementById('recipeModal').classList.add('open');
     }
 
-    function closeRecipeModal(e) {
-      document.getElementById('recipeModal').style.display = 'none';
+    function closeRecipeModal() {
+      document.getElementById('recipeModal').classList.remove('open');
     }
 
     function handleBtnClick() {
