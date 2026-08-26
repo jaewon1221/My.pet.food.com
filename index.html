@@ -11,7 +11,7 @@
   <style>
     :root {
       --primary-color: #2d4a22; /* 짙은 그린 */
-      --secondary-color: #fdfbf7; /* 부드러운 베이지 배경 */
+      --secondary-color: #fdfbf7;
       --accent-color: #3b2314; /* 초콜릿 브라운 */
       --text-color: #1f3317;
       --card-bg: #ffffff;
@@ -24,7 +24,7 @@
     /* 메인 컨테이너 */
     .app-container {
       width: 100%; max-width: 430px; background: var(--card-bg); min-height: 100vh; position: relative;
-      display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.08); overflow: hidden;
+      display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.08);
     }
     
     /* 상단 헤더 */
@@ -33,39 +33,39 @@
       border-bottom: 1px solid #eaeaea; background: #fff; position: sticky; top: 0; z-index: 100;
     }
     
-    /* 콘텐츠 영역 (하단 잘림 방지: padding-bottom을 180px로 수정) */
-    .app-content { flex: 1; padding: 25px; position: relative; padding-bottom: 180px; }
+    /* 콘텐츠 영역 (하단 잘림 방지 넉넉한 여백) */
+    .app-content { flex: 1; padding: 25px 25px 140px 25px; position: relative; }
     
-    /* 페이지 기본 숨김 및 전환 애니메이션 */
+    /* 페이지 기본 숨김 및 절대 잘리지 않도록 relative 구조 적용 */
     .page {
-      display: none; opacity: 0; transform: translateY(15px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      position: absolute; width: calc(100% - 50px); top: 25px; left: 25px;
+      display: none; opacity: 0; transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      width: 100%; position: relative;
     }
-    .page.active { display: block; opacity: 1; transform: translateY(0); position: relative; top: 0; left: 0; width: 100%; }
+    .page.active { display: block; opacity: 1; transform: translateY(0); }
     
     /* 타이틀 요소 스타일 */
-    .title-area { text-align: center; margin-bottom: 30px; }
-    .main-title { font-size: 1.7rem; font-weight: 800; line-height: 1.3; color: #000; margin-bottom: 10px; word-break: keep-all; }
+    .title-area { text-align: center; margin-bottom: 25px; }
+    .main-title { font-size: 1.6rem; font-weight: 800; line-height: 1.3; color: #000; margin-bottom: 8px; word-break: keep-all; }
     .highlight { color: var(--primary-color); }
-    .sub-title { color: #666; font-size: 1rem; font-weight: 400; line-height: 1.5; }
+    .sub-title { color: #666; font-size: 0.95rem; font-weight: 400; line-height: 1.5; }
     
     /* 메인 랜딩 일러스트 영역 */
     .hero-graphic {
-      text-align: center; margin: 50px 0; position: relative; animation: floating 3s ease-in-out infinite;
+      text-align: center; margin: 40px 0; position: relative; animation: floating 3s ease-in-out infinite;
     }
     @keyframes floating {
       0% { transform: translatey(0px); }
-      50% { transform: translatey(-15px); }
+      50% { transform: translatey(-12px); }
       100% { transform: translatey(0px); }
     }
     
     /* 설문 폼 스타일 */
-    .form-section { margin-bottom: 25px; }
-    .q-label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 12px; color: var(--text-color); }
+    .form-section { margin-bottom: 22px; }
+    .q-label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; color: var(--text-color); }
     .input-style {
-      width: 100%; padding: 16px; border: 2px solid #eaeaea; border-radius: 14px;
-      font-size: 1.05rem; transition: border-color 0.2s; background: #fdfdfd;
+      width: 100%; padding: 15px; border: 2px solid #eaeaea; border-radius: 14px;
+      font-size: 1rem; transition: border-color 0.2s; background: #fdfdfd;
     }
     .input-style:focus { border-color: var(--primary-color); outline: none; background: #fff; }
     
@@ -74,19 +74,19 @@
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
     .choice-label {
-      display: block; padding: 16px; background: #fff; border: 2px solid #eaeaea;
+      display: block; padding: 15px 10px; background: #fff; border: 2px solid #eaeaea;
       border-radius: 14px; text-align: center; font-weight: 600; cursor: pointer;
-      transition: all 0.2s ease; color: #555;
+      transition: all 0.2s ease; color: #555; font-size: 0.95rem;
     }
     .choice-item input:checked + .choice-label {
       background: #eef5eb; border-color: var(--primary-color); color: var(--primary-color);
-      transform: scale(1.02); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
+      transform: scale(1.01); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
     }
     
-    /* 하단 고정 버튼 영역 (간격 줄여 슬림하게 수정) */
+    /* 하단 고정 버튼 영역 */
     .btn-area {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 430px; padding: 12px 25px 24px;
+      width: 100%; max-width: 430px; padding: 15px 25px 25px;
       background: linear-gradient(to top, rgba(255,255,255,1) 85%, rgba(255,255,255,0)); z-index: 90;
     }
     .btn-main {
@@ -99,22 +99,21 @@
     
     /* 결과 카드 스타일 */
     .result-card {
-      background: #fff; border-radius: 20px; padding: 20px; margin-bottom: 15px;
-      display: flex; align-items: center; gap: 15px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: transform 0.2s;
+      background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 12px; border: 1px solid #f0f0f0;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
     }
-    .result-card:active { transform: scale(0.98); }
-    .card-icon { font-size: 2.2rem; background: #f8f6f0; padding: 12px; border-radius: 15px; }
+    .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; }
     .card-info { flex: 1; }
-    .card-info h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .card-info p { font-size: 0.9rem; color: #777; }
+    .card-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
+    .card-info p { font-size: 0.85rem; color: #777; }
     .match-tag {
-      background: #eef5eb; color: var(--primary-color); padding: 6px 10px;
-      border-radius: 8px; font-size: 0.8rem; font-weight: 700; white-space: nowrap;
+      background: #eef5eb; color: var(--primary-color); padding: 5px 8px;
+      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;
     }
     
     /* 로딩 상태 */
-    #loadingPage { display: none; text-align: center; padding-top: 100px; }
+    #loadingPage { display: none; text-align: center; padding-top: 80px; }
     .spinner {
       border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
       border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;
@@ -138,8 +137,8 @@
           <p class="sub-title">깐깐한 분석으로 우리 아이에게<br>딱 맞는 1:1 맞춤 식단을 매칭해 드립니다.</p>
         </div>
         <div class="hero-graphic">
-          <img src="https://img.icons8.com/emoji/96/dog-face.png" alt="dog" style="width:100px; height:100px;">
-          <img src="https://img.icons8.com/emoji/96/bowl-with-food.png" alt="bowl" style="width:70px; height:70px; position:absolute; bottom:-10px; right:100px;">
+          <img src="https://img.icons8.com/emoji/96/dog-face.png" alt="dog" style="width:90px; height:90px;">
+          <img src="https://img.icons8.com/emoji/96/bowl-with-food.png" alt="bowl" style="width:60px; height:60px; position:absolute; bottom:-10px; right:100px;">
         </div>
         <div class="btn-area">
           <button class="btn-main" onclick="nextPage(2)">
@@ -234,7 +233,7 @@
           <div class="match-tag">92% Match</div>
         </div>
         
-        <div class="form-section" style="margin-top:30px;">
+        <div class="form-section" style="margin-top:20px;">
           <label class="q-label">배송 주기 설정</label>
           <select class="input-style">
             <option>2주에 한 번 (가장 인기)</option>
@@ -261,7 +260,7 @@
         setTimeout(() => {
           targetPage.classList.add('active');
           window.scrollTo(0, 0);
-        }, 100); 
+        }, 50); 
       } else {
         targetPage.classList.add('active');
       }
@@ -282,7 +281,7 @@
       setTimeout(() => {
         document.getElementById('loadingPage').style.display = 'none';
         nextPage(3);
-      }, 2000);
+      }, 1500);
     }
   </script>
 </body>
