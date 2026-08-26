@@ -144,16 +144,16 @@
     .result-card.selected .card-radio::after {
       content: ''; width: 8px; height: 8px; background: #fff; border-radius: 50%;
     }
-    .card-icon { font-size: 1.8rem; background: #f8f6f0; padding: 8px; border-radius: 12px; pointer-events: none; }
-    .card-info { flex: 1; pointer-events: none; }
+    .card-icon { font-size: 1.8rem; background: #f8f6f0; padding: 8px; border-radius: 12px; }
+    .card-info { flex: 1; }
     .card-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
     .card-info p { font-size: 0.8rem; color: #777; }
     .match-tag {
       background: #eef5eb; color: var(--primary-color); padding: 4px 8px;
-      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; pointer-events: none;
+      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;
     }
     .btn-detail-view {
-      font-size: 0.75rem; color: #888; text-decoration: underline; margin-top: 4px; display: inline-block; cursor: pointer;
+      font-size: 0.8rem; color: #555; text-decoration: underline; margin-top: 6px; display: inline-block; padding: 4px 0; font-weight: 600;
     }
     
     #loadingPage { display: none; text-align: center; padding-top: 80px; }
@@ -293,7 +293,7 @@
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
             <p>피부 건강 & 눈물 개선 전용</p>
-            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('salmon');">상세보기 ></span>
+            <div class="btn-detail-view" id="btn-salmon">상세보기 ></div>
           </div>
           <div class="match-tag">98% Match</div>
         </div>
@@ -305,7 +305,7 @@
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
             <p>소화 유산균 & 영양 설계</p>
-            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('duck');">상세보기 ></span>
+            <div class="btn-detail-view" id="btn-duck">상세보기 ></div>
           </div>
           <div class="match-tag">92% Match</div>
         </div>
@@ -317,7 +317,7 @@
           <div class="card-info">
             <h4>에너지 비프 레시피</h4>
             <p>근육 강화 & 기력 회복</p>
-            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('beef');">상세보기 ></span>
+            <div class="btn-detail-view" id="btn-beef">상세보기 ></div>
           </div>
           <div class="match-tag">88% Match</div>
         </div>
@@ -329,7 +329,7 @@
           <div class="card-info">
             <h4>슬림 치킨 레시피</h4>
             <p>저지방 고단백 & 체중관리</p>
-            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('chicken');">상세보기 ></span>
+            <div class="btn-detail-view" id="btn-chicken">상세보기 ></div>
           </div>
           <div class="match-tag">85% Match</div>
         </div>
@@ -401,17 +401,17 @@
         ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
-        cal: '350 kcal/100g'
+        cal: '3,500 kcal/kg'
       },
       beef: {
         icon: '🥩',
         title: '에너지 비프 레시피',
         sub: '근육 강화 & 기력 회복',
-        desc: '철분과 필수 아미노산이 풍부한 청정 한우를 사용하여 활동량이 많은 아이들의 근육 형성과 면역력 증진을 돕습니다.',
+        desc: '철분과 필수 아미노산이 풍부한 청정 호주산 소고기를 사용하여 활동량이 많은 아이들의 근육 형성과 면역력 증진을 돕습니다.',
         ing: '호주산 소홍두깨살, 브로콜리, 당근',
         protein: '30.0% 이상',
         fat: '15.0% 이상',
-        cal: '380 kcal/100g'
+        cal: '3,800 kcal/kg'
       },
       chicken: {
         icon: '🍗',
@@ -421,7 +421,7 @@
         ing: '국내산 닭가슴살, 양배추, 사과',
         protein: '32.0% 이상',
         fat: '8.0% 이하',
-        cal: '330 kcal/100g'
+        cal: '3,300 kcal/kg'
       }
     };
 
@@ -459,6 +459,20 @@
       }
       closeModal();
     }
+
+    // 상세보기 버튼 이벤트 핸들러 바인딩
+    document.addEventListener("DOMContentLoaded", function() {
+      const keys = ['salmon', 'duck', 'beef', 'chicken'];
+      keys.forEach(key => {
+        const btn = document.getElementById('btn-' + key);
+        if (btn) {
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            openModal(key);
+          });
+        }
+      });
+    });
 
     function handleBtnClick() {
       if (step === 1) {
