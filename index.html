@@ -746,10 +746,16 @@
 
     function processPayment() {
       const selectedPayMethod = document.querySelector('input[name="payMethod"]:checked').value;
-      const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title).join(', ');
+      const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title);
       
+      if (selectedTitles.length === 0) {
+        alert('선택된 레시피가 없습니다. 하나 이상의 식단을 선택해 주세요!');
+        closeModal('paymentModal');
+        return;
+      }
+
       closeModal('paymentModal');
-      alert(`[${selectedPayMethod} 결제 완료]\n\n선택 식단: ${selectedTitles}\n정기배송 신청이 성공적으로 완료되었습니다!`);
+      alert(`[${selectedPayMethod} 결제 완료]\n\n선택 식단:\n- ${selectedTitles.join('\n- ')}\n\n정기배송 신청이 완료되었습니다!`);
     }
 
     function handleBtnClick() {
@@ -827,7 +833,6 @@
           return;
         }
 
-        /* 결제 수단 선택 모달 오픈 */
         const modal = document.getElementById('paymentModal');
         if(modal) {
           modal.style.setProperty('display', 'flex', 'important');
