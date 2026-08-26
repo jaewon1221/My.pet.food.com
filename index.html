@@ -213,6 +213,63 @@
     .delivery-text h5 { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--wood-brown); font-weight: 800; margin-top: 2px; }
 
+    /* 배송 트래킹 타임라인 스타일 */
+    .tracking-container {
+      background: var(--card-bg);
+      border: 1.5px solid #EFEAE4;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+    }
+    .tracking-step {
+      display: flex;
+      gap: 15px;
+      position: relative;
+      padding-bottom: 24px;
+    }
+    .tracking-step:last-child {
+      padding-bottom: 0;
+    }
+    .tracking-step:not(:last-child)::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 30px;
+      width: 2px;
+      height: calc(100% - 10px);
+      background-color: #EAE0D5;
+    }
+    .tracking-marker {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F8F4EE;
+      border: 2px solid #EAE0D5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+    .tracking-step.active .tracking-marker {
+      background: var(--wood-brown-light);
+      border-color: var(--wood-brown);
+      color: var(--wood-brown);
+      font-weight: bold;
+    }
+    .tracking-content h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .tracking-content p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
     .modal-overlay {
       display: none;
       position: fixed !important;
@@ -473,6 +530,58 @@
         </div>
       </div>
 
+      <!-- Page 5 (신규 추가: 주문 완료 및 배송 과정 트래킹) -->
+      <div id="page5" class="page">
+        <div class="title-area">
+          <h1 class="main-title" style="font-size:1.4rem;">🎉 주문이 완료되었습니다!</h1>
+          <p class="sub-title">신선한 수제 식단을 안전하게 준비해 보내드릴게요.</p>
+        </div>
+
+        <div class="delivery-info-box" style="background: var(--wood-brown-light); border-color: var(--wood-brown);">
+          <div class="delivery-icon">📦</div>
+          <div class="delivery-text">
+            <h5 style="color: var(--wood-brown);">배송 상태 안내</h5>
+            <p style="color: var(--wood-brown);">상품 준비 중</p>
+          </div>
+        </div>
+
+        <div class="tracking-container">
+          <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 16px; color: var(--text-main);">실시간 배송 진행 상황</h3>
+          
+          <div class="tracking-step active">
+            <div class="tracking-marker">✓</div>
+            <div class="tracking-content">
+              <h4>주문 접수 완료</h4>
+              <p>결제가 성공적으로 완료되었습니다.</p>
+            </div>
+          </div>
+
+          <div class="tracking-step active">
+            <div class="tracking-marker">2</div>
+            <div class="tracking-content">
+              <h4>신선 식단 조리 및 포장</h4>
+              <p>아이의 맞춤 레시피에 맞춰 당일 조리 중입니다.</p>
+            </div>
+          </div>
+
+          <div class="tracking-step">
+            <div class="tracking-marker">3</div>
+            <div class="tracking-content">
+              <h4>배송 출발</h4>
+              <p>신선함 유지를 위해 아이스박스로 안전 발송됩니다.</p>
+            </div>
+          </div>
+
+          <div class="tracking-step">
+            <div class="tracking-marker">4</div>
+            <div class="tracking-content">
+              <h4>배송 완료</h4>
+              <p>지정하신 주소 앞으로 안전하게 도착합니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- 하단 고정 우드브라운 버튼 -->
@@ -710,7 +819,8 @@
 
     function updateHeaderBackBtn() {
       const backBtn = document.getElementById('backBtn');
-      if (step > 1) {
+      // 5단계(배송 트래킹 완료 화면)에서는 뒤로가기 숨김 처리
+      if (step > 1 && step < 5) {
         backBtn.style.display = 'inline-block';
       } else {
         backBtn.style.display = 'none';
@@ -718,7 +828,7 @@
     }
 
     function goBack() {
-      if (pageHistory.length === 0) return;
+      if (pageHistory.length === 0 || step >= 5) return;
 
       const prevStep = pageHistory.pop();
 
@@ -735,6 +845,8 @@
         mainBtn.innerText = '분석 결과 확인하기';
       } else if (step === 3) {
         mainBtn.innerText = '선택한 식단 정기배송 신청하기';
+      } else if (step === 4) {
+        mainBtn.innerText = '결제 및 배송 신청 완료';
       }
 
       window.scrollTo(0, 0);
@@ -941,27 +1053,18 @@
     }
 
     function processPayment() {
-      const selectedPayMethod = document.querySelector('input[name="payMethod"]:checked').value;
-      const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title);
-      const cycleVal = document.getElementById('shipCycle').value;
-      const dateVal = document.getElementById('shipStartDate').value;
-      const isCouponUsed = document.getElementById('useCoupon').checked;
-      
-      if (selectedTitles.length === 0) {
-        alert('선택된 레시피가 없습니다. 하나 이상의 식단을 선택해 주세요!');
-        closeModal('paymentModal');
-        return;
-      }
-
       closeModal('paymentModal');
-      
-      let alertMsg = `[${selectedPayMethod} 결제 완료]\n\n- 선택 식단: ${selectedTitles.join(', ')}\n- 배송 주기: ${cycleVal}\n- 첫 배송일: ${dateVal}`;
-      if (isCouponUsed) {
-        alertMsg += `\n- 적용 할인: 10% 쿠폰 할인 적용됨!`;
-      }
-      alertMsg += `\n\n정기배송 신청이 완료되었습니다!`;
 
-      alert(alertMsg);
+      // 결제 완료 후 5단계(배송 트래킹 화면)로 진입
+      pageHistory.push(step);
+      document.getElementById('page4').classList.remove('active');
+      document.getElementById('page5').classList.add('active');
+      document.querySelector('.btn-area').style.display = 'none'; // 마지막 완료 화면에서는 하단 버튼 숨김
+      step = 5;
+      updateHeaderBackBtn();
+      window.scrollTo(0, 0);
+
+      alert('💳 결제가 성공적으로 완료되었습니다! 실시간 배송 상황을 확인해 보세요.');
     }
 
     function handleBtnClick() {
@@ -984,7 +1087,6 @@
         const nameInput = document.getElementById('dogName');
         const name = nameInput.value.trim() || '아이';
 
-        // 💡 성별(중성화 포함) 선택 유효성 검사 추가
         const selectedGender = document.querySelector('input[name="dogGender"]:checked');
         if (!selectedGender) {
           alert('아이의 성별 및 중성화 여부를 선택해 주세요!');
