@@ -158,7 +158,7 @@
     .card-info p { font-size: 0.8rem; color: #777; }
     .match-tag {
       background: #eef5eb; color: var(--primary-color); padding: 4px 8px;
-      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap;
+      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; text-align: right;
     }
     .btn-detail-view {
       font-size: 0.8rem; color: #555; text-decoration: underline; margin-top: 6px; display: inline-block; padding: 4px 0; font-weight: 600;
@@ -303,53 +303,8 @@
           <p class="sub-title">원하시는 레시피를 선택해 주세요 (중복 선택 가능)</p>
         </div>
 
-        <!-- 1. 연어 카드 -->
-        <div class="result-card" id="card-salmon" onclick="toggleCard('salmon')">
-          <div class="card-checkbox"></div>
-          <div class="card-icon">🐟</div>
-          <div class="card-info">
-            <h4>프리미엄 연어 레시피</h4>
-            <p>피부 건강 & 눈물 개선 전용</p>
-            <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('salmon');">상세보기 ></div>
-          </div>
-          <div class="match-tag">98% Match</div>
-        </div>
-
-        <!-- 2. 오리 카드 -->
-        <div class="result-card" id="card-duck" onclick="toggleCard('duck')">
-          <div class="card-checkbox"></div>
-          <div class="card-icon">🦆</div>
-          <div class="card-info">
-            <h4>센시티브 오리 레시피</h4>
-            <p>소화 유산균 & 영양 설계</p>
-            <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('duck');">상세보기 ></div>
-          </div>
-          <div class="match-tag">92% Match</div>
-        </div>
-
-        <!-- 3. 소고기 카드 -->
-        <div class="result-card" id="card-beef" onclick="toggleCard('beef')">
-          <div class="card-checkbox"></div>
-          <div class="card-icon">🥩</div>
-          <div class="card-info">
-            <h4>에너지 비프 레시피</h4>
-            <p>근육 강화 & 기력 회복</p>
-            <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('beef');">상세보기 ></div>
-          </div>
-          <div class="match-tag">88% Match</div>
-        </div>
-
-        <!-- 4. 닭고기 카드 -->
-        <div class="result-card" id="card-chicken" onclick="toggleCard('chicken')">
-          <div class="card-checkbox"></div>
-          <div class="card-icon">🍗</div>
-          <div class="card-info">
-            <h4>슬림 치킨 레시피</h4>
-            <p>저지방 고단백 & 체중관리</p>
-            <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('chicken');">상세보기 ></div>
-          </div>
-          <div class="match-tag">85% Match</div>
-        </div>
+        <!-- 동적으로 레시피 카드가 생성되는 영영 -->
+        <div id="recipeCardList"></div>
         
         <div class="form-section" style="margin-top:20px;">
           <label class="q-label">배송 주기 설정</label>
@@ -360,7 +315,7 @@
         </div>
       </div>
 
-      <!-- Page 4 (배송지 정보 및 배송 일정 안내) -->
+      <!-- Page 4 (배송지 정보) -->
       <div id="page4" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">배송지 정보를 입력해 주세요</h1>
@@ -431,8 +386,10 @@
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
 
+    // 레시피 정보 및 대응되는 건강 고민(targets) 정의
     const dataMap = {
       salmon: {
+        key: 'salmon',
         icon: '🐟',
         title: '프리미엄 연어 레시피',
         sub: '피부 건강 & 눈물 개선 전용',
@@ -440,9 +397,11 @@
         ing: '알래스카 생연어, 고구마, 블루베리',
         protein: '28.0% 이상',
         fat: '14.0% 이상',
-        cal: '3,650 kcal/kg'
+        cal: '3,650 kcal/kg',
+        targets: ['피부', '눈물']
       },
       duck: {
+        key: 'duck',
         icon: '🦆',
         title: '센시티브 오리 레시피',
         sub: '소화 유산균 & 영양 설계',
@@ -450,9 +409,11 @@
         ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
-        cal: '3,500 kcal/kg'
+        cal: '3,500 kcal/kg',
+        targets: ['소화']
       },
       beef: {
+        key: 'beef',
         icon: '🥩',
         title: '에너지 비프 레시피',
         sub: '근육 강화 & 기력 회복',
@@ -460,9 +421,11 @@
         ing: '호주산 소홍두깨살, 브로콜리, 당근',
         protein: '30.0% 이상',
         fat: '15.0% 이상',
-        cal: '3,800 kcal/kg'
+        cal: '3,800 kcal/kg',
+        targets: ['관절']
       },
       chicken: {
+        key: 'chicken',
         icon: '🍗',
         title: '슬림 치킨 레시피',
         sub: '저지방 고단백 & 체중관리',
@@ -470,9 +433,68 @@
         ing: '국내산 닭가슴살, 양배추, 사과',
         protein: '32.0% 이상',
         fat: '8.0% 이하',
-        cal: '3,300 kcal/kg'
+        cal: '3,300 kcal/kg',
+        targets: ['관절', '소화']
       }
     };
+
+    // 선택된 건강 고민에 따른 맞춤 레시피 렌더링 함수
+    function generateRecipeCards(selectedWorries) {
+      const container = document.getElementById('recipeCardList');
+      container.innerHTML = '';
+      selectedRecipeKeys.clear();
+
+      const recipes = Object.values(dataMap);
+
+      // 매칭 점수 계산
+      const scoredRecipes = recipes.map(recipe => {
+        let matchCount = 0;
+        recipe.targets.forEach(t => {
+          if (selectedWorries.includes(t)) matchCount++;
+        });
+
+        let baseScore = 75;
+        let finalScore = baseScore + (matchCount * 12);
+        if (selectedWorries.length === 0) finalScore = 90; // 고민 미선택 시 기본 점수
+        if (finalScore > 99) finalScore = 99;
+
+        return { ...recipe, score: finalScore, matchCount };
+      });
+
+      // 점수 높은 순으로 정렬
+      scoredRecipes.sort((a, b) => b.score - a.score);
+
+      // 첫 번째 고득점 항목 자동 선택
+      if (scoredRecipes.length > 0) {
+        selectedRecipeKeys.add(scoredRecipes[0].key);
+      }
+
+      // 카드 DOM 생성
+      scoredRecipes.forEach(recipe => {
+        const isSelected = selectedRecipeKeys.has(recipe.key);
+        const card = document.createElement('div');
+        card.className = `result-card ${isSelected ? 'selected' : ''}`;
+        card.id = `card-${recipe.key}`;
+        card.onclick = () => toggleCard(recipe.key);
+
+        let tagText = `${recipe.score}% Match`;
+        if (recipe.matchCount > 0) {
+          tagText = `추천 • ${recipe.score}%`;
+        }
+
+        card.innerHTML = `
+          <div class="card-checkbox"></div>
+          <div class="card-icon">${recipe.icon}</div>
+          <div class="card-info">
+            <h4>${recipe.title}</h4>
+            <p>${recipe.sub}</p>
+            <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('${recipe.key}');">상세보기 ></div>
+          </div>
+          <div class="match-tag">${tagText}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
     function toggleCard(key) {
       const target = document.getElementById('card-' + key);
@@ -538,8 +560,15 @@
           alert('아이의 이름을 입력해 주세요!');
           return;
         }
-        document.getElementById('resultName').innerText = name;
 
+        // 선택된 건강 고민 수집
+        const worryCheckboxes = document.querySelectorAll('input[name="worry"]:checked');
+        const selectedWorries = Array.from(worryCheckboxes).map(cb => cb.value);
+
+        // 맞춤 카드 동적 생성을 로딩 전 준비
+        generateRecipeCards(selectedWorries);
+
+        document.getElementById('resultName').innerText = name;
         document.getElementById('page2').classList.remove('active');
         document.getElementById('loadingPage').style.display = 'block';
         document.querySelector('.btn-area').style.display = 'none';
@@ -551,7 +580,7 @@
           document.getElementById('mainBtn').innerText = '선택한 식단 정기배송 신청하기';
           window.scrollTo(0, 0);
           step = 3;
-        }, 1500);
+        }, 1200);
       } else if (step === 3) {
         if(selectedRecipeKeys.size === 0) {
           alert('하나 이상의 레시피를 선택해 주세요!');
