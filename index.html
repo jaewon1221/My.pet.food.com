@@ -157,8 +157,8 @@
     .card-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
     .card-info p { font-size: 0.8rem; color: #777; }
     .match-tag {
-      background: #eef5eb; color: var(--primary-color); padding: 4px 8px;
-      border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; text-align: right;
+      background: #eef5eb; color: var(--primary-color); padding: 5px 10px;
+      border-radius: 10px; font-size: 0.8rem; font-weight: 800; white-space: nowrap; text-align: right;
     }
     .btn-detail-view {
       font-size: 0.8rem; color: #555; text-decoration: underline; margin-top: 6px; display: inline-block; padding: 4px 0; font-weight: 600;
@@ -171,7 +171,6 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* 배송 정보 박스 */
     .delivery-info-box {
       background: #f8f9fa; border: 1.5px solid #e2e8f0; border-radius: 16px;
       padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
@@ -180,31 +179,15 @@
     .delivery-text h5 { font-size: 0.9rem; color: #666; font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--primary-color); font-weight: 800; margin-top: 2px; }
 
-    /* 레시피 모달 스타일 */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: 99999;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.7); z-index: 99999; justify-content: center; align-items: center; padding: 20px;
     }
     .modal-content {
-      background: #fff;
-      border-radius: 24px;
-      width: 100%;
-      max-width: 380px;
-      padding: 24px;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: #fff; border-radius: 24px; width: 100%; max-width: 380px; padding: 24px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
     .modal-close {
-      position: absolute;
-      top: 18px; right: 20px;
-      font-size: 1.4rem;
-      background: none; border: none; cursor: pointer; color: #888; padding: 5px;
+      position: absolute; top: 18px; right: 20px; font-size: 1.4rem; background: none; border: none; cursor: pointer; color: #888; padding: 5px;
     }
     .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .modal-icon { font-size: 2.5rem; background: #f8f6f0; padding: 12px; border-radius: 16px; }
@@ -216,10 +199,8 @@
     .modal-body li span { font-weight: 700; color: #222; }
     
     .btn-select-recipe {
-      width: 100%; margin-top: 18px; padding: 12px; background: var(--primary-color);
-      color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      width: 100%; margin-top: 18px; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
     }
-
   </style>
 </head>
 <body>
@@ -303,7 +284,7 @@
           <p class="sub-title">원하시는 레시피를 선택해 주세요 (중복 선택 가능)</p>
         </div>
 
-        <!-- 동적으로 레시피 카드가 생성되는 영영 -->
+        <!-- 동적 레시피 영역 -->
         <div id="recipeCardList"></div>
         
         <div class="form-section" style="margin-top:20px;">
@@ -315,7 +296,7 @@
         </div>
       </div>
 
-      <!-- Page 4 (배송지 정보) -->
+      <!-- Page 4 -->
       <div id="page4" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">배송지 정보를 입력해 주세요</h1>
@@ -386,7 +367,7 @@
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
 
-    // 레시피 정보 및 대응되는 건강 고민(targets) 정의
+    // 레시피 데이터와 관련 매칭 고민 키워드 설정
     const dataMap = {
       salmon: {
         key: 'salmon',
@@ -398,7 +379,8 @@
         protein: '28.0% 이상',
         fat: '14.0% 이상',
         cal: '3,650 kcal/kg',
-        targets: ['피부', '눈물']
+        targets: ['피부', '눈물'],
+        baseScore: 72
       },
       duck: {
         key: 'duck',
@@ -410,7 +392,8 @@
         protein: '26.0% 이상',
         fat: '12.0% 이상',
         cal: '3,500 kcal/kg',
-        targets: ['소화']
+        targets: ['소화'],
+        baseScore: 70
       },
       beef: {
         key: 'beef',
@@ -422,7 +405,8 @@
         protein: '30.0% 이상',
         fat: '15.0% 이상',
         cal: '3,800 kcal/kg',
-        targets: ['관절']
+        targets: ['관절'],
+        baseScore: 68
       },
       chicken: {
         key: 'chicken',
@@ -434,11 +418,12 @@
         protein: '32.0% 이상',
         fat: '8.0% 이하',
         cal: '3,300 kcal/kg',
-        targets: ['관절', '소화']
+        targets: ['관절', '소화'],
+        baseScore: 65
       }
     };
 
-    // 선택된 건강 고민에 따른 맞춤 레시피 렌더링 함수
+    // 건강 고민 선택에 맞춰 명확한 추천율(Match%) 계산 및 재배치
     function generateRecipeCards(selectedWorries) {
       const container = document.getElementById('recipeCardList');
       container.innerHTML = '';
@@ -446,41 +431,48 @@
 
       const recipes = Object.values(dataMap);
 
-      // 매칭 점수 계산
       const scoredRecipes = recipes.map(recipe => {
-        let matchCount = 0;
+        let score = recipe.baseScore;
+        let matchedCount = 0;
+
+        // 선택한 건강 고민과 레시피 타깃 일치 여부 검사
         recipe.targets.forEach(t => {
-          if (selectedWorries.includes(t)) matchCount++;
+          if (selectedWorries.includes(t)) {
+            matchedCount++;
+          }
         });
 
-        let baseScore = 75;
-        let finalScore = baseScore + (matchCount * 12);
-        if (selectedWorries.length === 0) finalScore = 90; // 고민 미선택 시 기본 점수
-        if (finalScore > 99) finalScore = 99;
+        if (selectedWorries.length === 0) {
+          // 아무것도 선택 안했을 경우 기본 점수 세팅
+          score = recipe.baseScore + 15;
+        } else if (matchedCount > 0) {
+          // 일치하는 고민이 있을 경우 90% 이상으로 점수 상승
+          score = 88 + (matchedCount * 5);
+        } else {
+          // 일치하는 고민이 없는 카드는 점수 감점
+          score = recipe.baseScore - 5;
+        }
 
-        return { ...recipe, score: finalScore, matchCount };
+        if (score > 98) score = 98;
+
+        return { ...recipe, computedScore: score, matchedCount };
       });
 
-      // 점수 높은 순으로 정렬
-      scoredRecipes.sort((a, b) => b.score - a.score);
+      // 점수가 높은 순서대로 내림차순 정렬
+      scoredRecipes.sort((a, b) => b.computedScore - a.computedScore);
 
-      // 첫 번째 고득점 항목 자동 선택
+      // 점수가 가장 높은 1번 카드 자동 선택
       if (scoredRecipes.length > 0) {
         selectedRecipeKeys.add(scoredRecipes[0].key);
       }
 
-      // 카드 DOM 생성
+      // 카드 엘리먼트 생성
       scoredRecipes.forEach(recipe => {
         const isSelected = selectedRecipeKeys.has(recipe.key);
         const card = document.createElement('div');
         card.className = `result-card ${isSelected ? 'selected' : ''}`;
         card.id = `card-${recipe.key}`;
         card.onclick = () => toggleCard(recipe.key);
-
-        let tagText = `${recipe.score}% Match`;
-        if (recipe.matchCount > 0) {
-          tagText = `추천 • ${recipe.score}%`;
-        }
 
         card.innerHTML = `
           <div class="card-checkbox"></div>
@@ -490,7 +482,7 @@
             <p>${recipe.sub}</p>
             <div class="btn-detail-view" onclick="event.stopPropagation(); openModal('${recipe.key}');">상세보기 ></div>
           </div>
-          <div class="match-tag">${tagText}</div>
+          <div class="match-tag">${recipe.computedScore}% Match</div>
         `;
         container.appendChild(card);
       });
@@ -561,11 +553,11 @@
           return;
         }
 
-        // 선택된 건강 고민 수집
+        // 체크된 고민 항목 배열 수집
         const worryCheckboxes = document.querySelectorAll('input[name="worry"]:checked');
         const selectedWorries = Array.from(worryCheckboxes).map(cb => cb.value);
 
-        // 맞춤 카드 동적 생성을 로딩 전 준비
+        // 맞춤 카드 동적 매칭 생성
         generateRecipeCards(selectedWorries);
 
         document.getElementById('resultName').innerText = name;
