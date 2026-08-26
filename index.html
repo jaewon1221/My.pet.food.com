@@ -133,6 +133,7 @@
     
     .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .choice-group.age-group { grid-template-columns: repeat(3, 1fr); }
+    .choice-group.gender-group { grid-template-columns: repeat(2, 1fr); }
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
     .choice-label {
@@ -349,7 +350,29 @@
         </div>
 
         <div class="form-section">
-          <label class="q-label">2. 아이의 나이는 어떻게 되나요? (필수 선택)</label>
+          <label class="q-label">2. 아이의 성별을 선택해 주세요 (필수 선택)</label>
+          <div class="choice-group gender-group">
+            <div class="choice-item">
+              <input type="radio" name="dogGender" id="gender1" value="남아(중성화)">
+              <label for="gender1" class="choice-label">🐶 남아 (중성화)</label>
+            </div>
+            <div class="choice-item">
+              <input type="radio" name="dogGender" id="gender2" value="여아(중성화)">
+              <label for="gender2" class="choice-label">🐶 여아 (중성화)</label>
+            </div>
+            <div class="choice-item">
+              <input type="radio" name="dogGender" id="gender3" value="남아(미중성화)">
+              <label for="gender3" class="choice-label">🐶 남아 (일반)</label>
+            </div>
+            <div class="choice-item">
+              <input type="radio" name="dogGender" id="gender4" value="여아(미중성화)">
+              <label for="gender4" class="choice-label">🐶 여아 (일반)</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="q-label">3. 아이의 나이는 어떻게 되나요? (필수 선택)</label>
           <div class="choice-group age-group">
             <div class="choice-item">
               <input type="radio" name="dogAge" id="age1" value="퍼피">
@@ -367,7 +390,7 @@
         </div>
 
         <div class="form-section">
-          <label class="q-label">3. 걱정되는 건강 고민이 있나요? (중복 가능)</label>
+          <label class="q-label">4. 걱정되는 건강 고민이 있나요? (중복 가능)</label>
           <div class="choice-group">
             <div class="choice-item">
               <input type="checkbox" name="worry" id="worry1" value="피부">
@@ -943,7 +966,6 @@
 
     function handleBtnClick() {
       if (step === 1) {
-        // 💡 [추가된 로직] 첫 화면에서 로그인 여부 검사
         if (!isLoggedIn) {
           alert('서비스를 이용하시려면 로그인이 필요합니다!');
           const modal = document.getElementById('loginModal');
@@ -961,6 +983,13 @@
       } else if (step === 2) {
         const nameInput = document.getElementById('dogName');
         const name = nameInput.value.trim() || '아이';
+
+        // 💡 성별(중성화 포함) 선택 유효성 검사 추가
+        const selectedGender = document.querySelector('input[name="dogGender"]:checked');
+        if (!selectedGender) {
+          alert('아이의 성별 및 중성화 여부를 선택해 주세요!');
+          return;
+        }
 
         const selectedAge = document.querySelector('input[name="dogAge"]:checked');
         if (!selectedAge) {
