@@ -275,7 +275,6 @@
     }
     .pay-icon { font-size: 1.2rem; }
 
-    /* 쿠폰 적용 영역 스타일 */
     .coupon-box {
       background: #F8F4EE;
       border: 1.5px solid #EAE0D5;
@@ -503,7 +502,6 @@
         </div>
       </div>
       <div class="modal-body">
-        <!-- 쿠폰 적용 영역 -->
         <div class="coupon-box">
           <label class="coupon-label" for="useCoupon">
             <input type="checkbox" id="useCoupon" style="width:18px; height:18px; accent-color:var(--wood-brown);">
@@ -613,7 +611,7 @@
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
     let isLoggedIn = false;
-    let hasCoupon = false; // 쿠폰 보유 여부 플래그
+    let hasCoupon = false;
 
     const dataMap = {
       salmon: {
@@ -792,7 +790,7 @@
       }
 
       isLoggedIn = true;
-      hasCoupon = true; // 회원가입 완료 시 10% 쿠폰 지급
+      hasCoupon = true;
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
       alert('🎉 회원가입이 완료되었습니다!\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.');
       closeModal('loginModal');
@@ -800,7 +798,7 @@
 
     function handleSnsLogin(provider) {
       isLoggedIn = true;
-      hasCoupon = true; // 소셜 로그인 시에도 10% 쿠폰 지급
+      hasCoupon = true;
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
       alert(`🎉 ${provider} 계정으로 로그인 되었습니다.\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.`);
       closeModal('loginModal');
@@ -991,6 +989,13 @@
       } else if (step === 3) {
         if(selectedRecipeKeys.size === 0) {
           alert('하나 이상의 레시피를 선택해 주세요!');
+          return;
+        }
+        
+        // 💡 [추가된 유효성 검사] 첫 배송 시작일(달력)이 선택되었는지 확인
+        const dateInputVal = document.getElementById('shipStartDate').value;
+        if (!dateInputVal) {
+          alert('첫 배송 시작일을 선택해 주세요!');
           return;
         }
         
