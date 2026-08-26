@@ -275,6 +275,33 @@
     }
     .pay-icon { font-size: 1.2rem; }
 
+    /* 쿠폰 적용 영역 스타일 */
+    .coupon-box {
+      background: #F8F4EE;
+      border: 1.5px solid #EAE0D5;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .coupon-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .coupon-badge {
+      background: var(--wood-brown);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
     .mypage-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
     .mypage-btn {
       width: 100%; padding: 14px; border: 1.5px solid #E6E0D8; background: var(--card-bg);
@@ -446,6 +473,10 @@
         </div>
       </div>
       <div class="modal-body">
+        <div style="background:#F7F1EB; padding:12px; border-radius:12px; margin-bottom:12px; text-align:center;">
+          <p style="font-size:0.85rem; color:var(--wood-brown); font-weight:700;">🎁 보유 중인 쿠폰</p>
+          <p style="font-size:1.1rem; font-weight:800; margin-top:2px;">신규 회원가입 10% 할인 쿠폰</p>
+        </div>
         <div class="mypage-menu">
           <button class="mypage-btn" onclick="openCart()">
             <span>🛒 장바구니 보기</span>
@@ -467,11 +498,20 @@
       <div class="modal-header">
         <div class="modal-icon">💳</div>
         <div class="modal-title">
-          <h3>결제 수단 선택</h3>
-          <p>원하시는 결제 방식을 선택해 주세요</p>
+          <h3>결제 및 쿠폰 사용</h3>
+          <p>결제 수단과 할인 쿠폰을 선택해 주세요</p>
         </div>
       </div>
       <div class="modal-body">
+        <!-- 쿠폰 적용 영역 -->
+        <div class="coupon-box">
+          <label class="coupon-label" for="useCoupon">
+            <input type="checkbox" id="useCoupon" style="width:18px; height:18px; accent-color:var(--wood-brown);">
+            <span>회원가입 10% 할인 쿠폰 적용</span>
+          </label>
+          <span class="coupon-badge">10% OFF</span>
+        </div>
+
         <div class="pay-options">
           <div class="pay-item">
             <input type="radio" name="payMethod" id="payCard" value="신용/체크카드" checked>
@@ -498,7 +538,7 @@
             </label>
           </div>
         </div>
-        <button class="btn-select-recipe" style="margin-top:20px;" onclick="processPayment()">선택한 결제 수단으로 결제하기</button>
+        <button class="btn-select-recipe" style="margin-top:20px;" onclick="processPayment()">선택한 수단으로 결제 완료하기</button>
       </div>
     </div>
   </div>
@@ -557,11 +597,11 @@
         <div class="login-form-group">
           <input type="password" id="signupPw" placeholder="비밀번호">
         </div>
-        <button class="btn-submit-login" onclick="handleSignup()">회원가입 완료</button>
+        <button class="btn-submit-login" onclick="handleSignup()">회원가입 완료 및 쿠폰받기</button>
       </div>
 
       <div class="sns-login-area">
-        <p class="sns-title">간편 소셜 로그인</p>
+        <p class="sns-title">간편 소셜 로그인 (가입 시 10% 쿠폰 즉시 지급)</p>
         <button class="btn-sns-kakao" onclick="handleSnsLogin('카카오')">💬 카카오로 3초만에 시작하기</button>
       </div>
     </div>
@@ -573,6 +613,7 @@
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
     let isLoggedIn = false;
+    let hasCoupon = false; // 쿠폰 보유 여부 플래그
 
     const dataMap = {
       salmon: {
@@ -629,7 +670,6 @@
       }
     };
 
-    // 오늘 날짜를 YYYY-MM-DD 형식으로 구하여 달력의 기본값 및 최소 선택일로 지정
     function initDatePicker() {
       const today = new Date();
       const tomorrow = new Date(today);
@@ -643,7 +683,7 @@
       if (dateInput) {
         const formattedDate = `${yyyy}-${mm}-${dd}`;
         dateInput.value = formattedDate;
-        dateInput.min = formattedDate; // 오늘 이후부터 선택 가능
+        dateInput.min = formattedDate;
       }
     }
 
@@ -701,6 +741,7 @@
 
     function handleLogout() {
       isLoggedIn = false;
+      hasCoupon = false;
       document.getElementById('loginHeaderBtn').innerText = '로그인';
       closeModal('myPageModal');
       alert('로그아웃 되었습니다.');
@@ -751,15 +792,17 @@
       }
 
       isLoggedIn = true;
+      hasCoupon = true; // 회원가입 완료 시 10% 쿠폰 지급
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
-      alert('회원가입이 완료되어 로그인되었습니다!');
+      alert('🎉 회원가입이 완료되었습니다!\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.');
       closeModal('loginModal');
     }
 
     function handleSnsLogin(provider) {
       isLoggedIn = true;
+      hasCoupon = true; // 소셜 로그인 시에도 10% 쿠폰 지급
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
-      alert(`${provider} 계정으로 로그인 되었습니다.`);
+      alert(`🎉 ${provider} 계정으로 로그인 되었습니다.\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.`);
       closeModal('loginModal');
     }
 
@@ -863,7 +906,6 @@
       closeModal('recipeModal');
     }
 
-    // 달력에서 선택한 날짜를 가져와서 요일과 함께 화면에 표시
     function setDeliveryDate() {
       const dateInputVal = document.getElementById('shipStartDate').value;
       if (!dateInputVal) return;
@@ -882,6 +924,7 @@
       const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title);
       const cycleVal = document.getElementById('shipCycle').value;
       const dateVal = document.getElementById('shipStartDate').value;
+      const isCouponUsed = document.getElementById('useCoupon').checked;
       
       if (selectedTitles.length === 0) {
         alert('선택된 레시피가 없습니다. 하나 이상의 식단을 선택해 주세요!');
@@ -890,7 +933,14 @@
       }
 
       closeModal('paymentModal');
-      alert(`[${selectedPayMethod} 결제 완료]\n\n- 선택 식단: ${selectedTitles.join(', ')}\n- 배송 주기: ${cycleVal}\n- 첫 배송일: ${dateVal}\n\n정기배송 신청이 완료되었습니다!`);
+      
+      let alertMsg = `[${selectedPayMethod} 결제 완료]\n\n- 선택 식단: ${selectedTitles.join(', ')}\n- 배송 주기: ${cycleVal}\n- 첫 배송일: ${dateVal}`;
+      if (isCouponUsed) {
+        alertMsg += `\n- 적용 할인: 10% 쿠폰 할인 적용됨!`;
+      }
+      alertMsg += `\n\n정기배송 신청이 완료되었습니다!`;
+
+      alert(alertMsg);
     }
 
     function handleBtnClick() {
@@ -921,7 +971,7 @@
         const selectedWorries = Array.from(worryCheckboxes).map(cb => cb.value);
 
         generateRecipeCards(selectedWorries);
-        initDatePicker(); // 결과 화면 진입 시 달력 기본 날짜 세팅
+        initDatePicker();
 
         pageHistory.push(step);
         document.getElementById('resultName').innerText = name;
