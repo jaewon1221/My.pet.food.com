@@ -263,6 +263,18 @@
       border-color: var(--wood-brown); background: var(--wood-brown-light); color: var(--wood-brown);
     }
     .pay-icon { font-size: 1.2rem; }
+
+    /* 마이페이지 모달 버튼 스타일 */
+    .mypage-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .mypage-btn {
+      width: 100%; padding: 14px; border: 1.5px solid #E6E0D8; background: var(--card-bg);
+      border-radius: 12px; font-size: 1rem; font-weight: 700; color: var(--text-main);
+      display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mypage-btn:hover { background: var(--wood-brown-light); border-color: var(--wood-brown); color: var(--wood-brown); }
+    .mypage-btn-logout { border-color: #F3D0D0; color: #D9534F; }
+    .mypage-btn-logout:hover { background: #FDF2F2; border-color: #D9534F; color: #C9302C; }
   </style>
 </head>
 <body>
@@ -270,7 +282,7 @@
   <div class="app-container">
     <header class="app-header" id="mainHeader">
       <span>🐾 멍마카세</span>
-      <button class="btn-login-open" id="loginHeaderBtn" onclick="openLoginModal()">로그인</button>
+      <button class="btn-login-open" id="loginHeaderBtn" onclick="handleHeaderBtnClick()">로그인</button>
     </header>
 
     <div class="app-content">
@@ -397,6 +409,32 @@
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기 →
       </button>
+    </div>
+  </div>
+
+  <!-- 마이페이지 모달 -->
+  <div id="myPageModal" class="modal-overlay" onclick="closeModal('myPageModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('myPageModal')">✕</button>
+      <div class="modal-header">
+        <div class="modal-icon">👤</div>
+        <div class="modal-title">
+          <h3>마이페이지</h3>
+          <p>반갑습니다, 보호자님!</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="mypage-menu">
+          <button class="mypage-btn" onclick="openCart()">
+            <span>🛒 장바구니 보기</span>
+            <span>></span>
+          </button>
+          <button class="mypage-btn mypage-btn-logout" onclick="handleLogout()">
+            <span>🚪 로그아웃</span>
+            <span>></span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -568,11 +606,31 @@
       }
     };
 
-    function openLoginModal() {
-      const modal = document.getElementById('loginModal');
-      if(modal) {
-        modal.style.setProperty('display', 'flex', 'important');
+    function handleHeaderBtnClick() {
+      if (isLoggedIn) {
+        const modal = document.getElementById('myPageModal');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+      } else {
+        const modal = document.getElementById('loginModal');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
       }
+    }
+
+    function openCart() {
+      closeModal('myPageModal');
+      const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title);
+      if (selectedTitles.length === 0) {
+        alert('🛒 장바구니에 담긴 식단이 없습니다. 레시피를 선택해 주세요!');
+      } else {
+        alert(`🛒 [장바구니 목록]\n\n- ${selectedTitles.join('\n- ')}`);
+      }
+    }
+
+    function handleLogout() {
+      isLoggedIn = false;
+      document.getElementById('loginHeaderBtn').innerText = '로그인';
+      closeModal('myPageModal');
+      alert('로그아웃 되었습니다.');
     }
 
     function switchLoginTab(type) {
