@@ -43,8 +43,10 @@
     }
     
     .app-header {
-      text-align: center;
-      padding: 18px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
       font-weight: 800;
       font-size: 1.2rem;
       color: var(--primary-color);
@@ -53,6 +55,17 @@
       position: sticky;
       top: 0;
       z-index: 100;
+    }
+    
+    .btn-login-open {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #555;
+      background: #f0f0f0;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
     }
     
     .app-content {
@@ -179,6 +192,7 @@
     .delivery-text h5 { font-size: 0.9rem; color: #666; font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--primary-color); font-weight: 800; margin-top: 2px; }
 
+    /* 모달 공통 스타일 */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0, 0, 0, 0.7); z-index: 99999; justify-content: center; align-items: center; padding: 20px;
@@ -201,13 +215,41 @@
     .btn-select-recipe {
       width: 100%; margin-top: 18px; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
     }
+
+    /* 로그인 모달 전용 스타일 */
+    .login-tabs {
+      display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px;
+    }
+    .login-tab {
+      flex: 1; text-align: center; padding: 10px; font-weight: 700; color: #aaa; cursor: pointer;
+    }
+    .login-tab.active {
+      color: var(--primary-color); border-bottom: 2px solid var(--primary-color); margin-bottom: -2px;
+    }
+    .login-form-group { margin-bottom: 14px; }
+    .login-form-group input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 0.95rem;
+    }
+    .login-form-group input:focus { border-color: var(--primary-color); outline: none; }
+    .btn-submit-login {
+      width: 100%; padding: 14px; background-color: var(--primary-color); color: #fff;
+      border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 8px;
+    }
+    .sns-login-area {
+      margin-top: 20px; text-align: center; border-top: 1px dashed #e0e0e0; padding-top: 16px;
+    }
+    .sns-title { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
+    .btn-sns-kakao {
+      width: 100%; padding: 12px; background: #FEE500; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     <header class="app-header">
-      🐾 멍마카세
+      <span>🐾 멍마카세</span>
+      <button class="btn-login-open" id="loginHeaderBtn" onclick="openLoginModal()">로그인</button>
     </header>
 
     <div class="app-content">
@@ -235,10 +277,10 @@
         </div>
 
         <div class="form-section">
-          <label class="q-label">2. 아이의 나이는 어떻게 되나요?</label>
+          <label class="q-label">2. 아이의 나이는 어떻게 되나요? (필수 선택)</label>
           <div class="choice-group">
             <div class="choice-item">
-              <input type="radio" name="dogAge" id="age1" value="퍼피" checked>
+              <input type="radio" name="dogAge" id="age1" value="퍼피">
               <label for="age1" class="choice-label">1세 미만</label>
             </div>
             <div class="choice-item">
@@ -337,10 +379,10 @@
     </div>
   </div>
 
-  <!-- 레시피 모달 -->
-  <div id="recipeModal" class="modal-overlay" onclick="closeModal()">
+  <!-- 레시피 상세 모달 -->
+  <div id="recipeModal" class="modal-overlay" onclick="closeModal('recipeModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <button class="modal-close" onclick="closeModal('recipeModal')">✕</button>
       <div class="modal-header">
         <div id="modalIcon" class="modal-icon">🐟</div>
         <div class="modal-title">
@@ -361,10 +403,53 @@
     </div>
   </div>
 
+  <!-- 로그인 / 회원가입 모달 -->
+  <div id="loginModal" class="modal-overlay" onclick="closeModal('loginModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
+      
+      <div class="login-tabs">
+        <div id="tabLogin" class="login-tab active" onclick="switchLoginTab('login')">로그인</div>
+        <div id="tabSignup" class="login-tab" onclick="switchLoginTab('signup')">회원가입</div>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <div id="loginForm">
+        <div class="login-form-group">
+          <input type="email" id="loginEmail" placeholder="이메일 계정">
+        </div>
+        <div class="login-form-group">
+          <input type="password" id="loginPw" placeholder="비밀번호">
+        </div>
+        <button class="btn-submit-login" onclick="handleLogin()">로그인</button>
+      </div>
+
+      <!-- 회원가입 폼 -->
+      <div id="signupForm" style="display:none;">
+        <div class="login-form-group">
+          <input type="text" id="signupName" placeholder="이름">
+        </div>
+        <div class="login-form-group">
+          <input type="email" id="signupEmail" placeholder="이메일 계정">
+        </div>
+        <div class="login-form-group">
+          <input type="password" id="signupPw" placeholder="비밀번호">
+        </div>
+        <button class="btn-submit-login" onclick="handleSignup()">회원가입 완료</button>
+      </div>
+
+      <div class="sns-login-area">
+        <p class="sns-title">간편 소셜 로그인</p>
+        <button class="btn-sns-kakao" onclick="handleSnsLogin('카카오')">💬 카카오로 3초만에 시작하기</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let step = 1;
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
+    let isLoggedIn = false;
 
     const dataMap = {
       salmon: {
@@ -421,6 +506,69 @@
       }
     };
 
+    /* 로그인 및 모달 관련 제어 */
+    function openLoginModal() {
+      document.getElementById('loginModal').style.display = 'flex';
+    }
+
+    function switchLoginTab(type) {
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+
+      if (type === 'login') {
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+      } else {
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        signupForm.style.display = 'block';
+        loginForm.style.display = 'none';
+      }
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const pw = document.getElementById('loginPw').value.trim();
+
+      if (!email || !pw) {
+        alert('이메일과 비밀번호를 입력해 주세요.');
+        return;
+      }
+
+      isLoggedIn = true;
+      document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
+      alert('성공적으로 로그인되었습니다!');
+      closeModal('loginModal');
+    }
+
+    function handleSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const pw = document.getElementById('signupPw').value.trim();
+
+      if (!name || !email || !pw) {
+        alert('모든 필드를 입력해 주세요.');
+        return;
+      }
+
+      isLoggedIn = true;
+      document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
+      alert('회원가입이 완료되어 로그인되었습니다!');
+      closeModal('loginModal');
+    }
+
+    function handleSnsLogin(provider) {
+      isLoggedIn = true;
+      document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
+      alert(`${provider} 계정으로 로그인 되었습니다.`);
+      closeModal('loginModal');
+    }
+
+    /* 카드 및 리스트 제어 */
     function generateRecipeCards(selectedWorries) {
       const container = document.getElementById('recipeCardList');
       container.innerHTML = '';
@@ -504,15 +652,15 @@
       document.getElementById('recipeModal').style.display = 'flex';
     }
 
-    function closeModal() {
-      document.getElementById('recipeModal').style.display = 'none';
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
     }
 
     function applyModalSelection() {
       if(activeModalKey) {
         toggleCard(activeModalKey);
       }
-      closeModal();
+      closeModal('recipeModal');
     }
 
     function setDeliveryDate() {
@@ -535,16 +683,19 @@
         window.scrollTo(0, 0);
         step = 2;
       } else if (step === 2) {
-        const name = document.getElementById('dogName').value;
+        const name = document.getElementById('dogName').value.trim();
         if(!name) {
           alert('아이의 이름을 입력해 주세요!');
           return;
         }
 
-        // 선택된 고민 항목 검증
+        const selectedAge = document.querySelector('input[name="dogAge"]:checked');
+        if (!selectedAge) {
+          alert('아이의 나이를 선택해 주세요!');
+          return;
+        }
+
         const worryCheckboxes = document.querySelectorAll('input[name="worry"]:checked');
-        
-        // 고민 버튼 미선택 시 진행 차단
         if (worryCheckboxes.length === 0) {
           alert('걱정되는 건강 고민을 최소 하나 이상 선택해 주세요!');
           return;
@@ -580,11 +731,25 @@
         window.scrollTo(0, 0);
         step = 4;
       } else if (step === 4) {
-        const userName = document.getElementById('userName').value;
-        const userAddress = document.getElementById('userAddress').value;
+        const userName = document.getElementById('userName').value.trim();
+        const userPhone = document.getElementById('userPhone').value.trim();
+        const userAddress = document.getElementById('userAddress').value.trim();
+        const userAddressDetail = document.getElementById('userAddressDetail').value.trim();
 
-        if(!userName || !userAddress) {
-          alert('수령인 성함과 배송지 주소를 입력해 주세요!');
+        if(!userName) {
+          alert('수령인 성함을 입력해 주세요!');
+          return;
+        }
+        if(!userPhone) {
+          alert('연락처를 입력해 주세요!');
+          return;
+        }
+        if(!userAddress) {
+          alert('배송지 주소를 입력해 주세요!');
+          return;
+        }
+        if(!userAddressDetail) {
+          alert('상세 주소를 입력해 주세요!');
           return;
         }
 
