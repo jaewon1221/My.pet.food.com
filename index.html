@@ -44,6 +44,7 @@
       flex-direction: column;
     }
     
+    /* 상단 헤더 */
     .app-header {
       display: flex !important;
       justify-content: space-between !important;
@@ -57,6 +58,22 @@
       position: sticky;
       top: 0;
       z-index: 9999 !important;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-back-header {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--wood-brown);
+      cursor: pointer;
+      display: none; /* 기본 숨김 */
+      padding: 0 4px;
     }
     
     .btn-login-open {
@@ -115,7 +132,7 @@
     .input-style:focus { border-color: var(--wood-brown); outline: none; }
     
     .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .choice-group.age-group { grid-template-columns: repeat(3, 1fr); } /* 나이 선택 3열 배치 */
+    .choice-group.age-group { grid-template-columns: repeat(3, 1fr); }
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
     .choice-label {
@@ -274,7 +291,10 @@
 
   <div class="app-container">
     <header class="app-header" id="mainHeader">
-      <span>🐾 멍마카세</span>
+      <div class="header-left">
+        <button class="btn-back-header" id="backBtn" onclick="goBack()">←</button>
+        <span>🐾 멍마카세</span>
+      </div>
       <button class="btn-login-open" id="loginHeaderBtn" onclick="handleHeaderBtnClick()">로그인</button>
     </header>
 
@@ -544,6 +564,7 @@
 
   <script>
     let step = 1;
+    let pageHistory = []; // 뒤로가기를 위한 히스토리 스택
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
     let isLoggedIn = false;
@@ -602,6 +623,39 @@
         baseScore: 65
       }
     };
+
+    function updateHeaderBackBtn() {
+      const backBtn = document.getElementById('backBtn');
+      if (step > 1) {
+        backBtn.style.display = 'inline-block';
+      } else {
+        backBtn.style.display = 'none';
+      }
+    }
+
+    function goBack() {
+      if (pageHistory.length === 0) return;
+
+      const prevStep = pageHistory.pop();
+
+      document.getElementById(`page${step}`).classList.remove('active');
+      document.getElementById(`page${prevStep}`).classList.add('active');
+
+      step = prevStep;
+      updateHeaderBackBtn();
+
+      // 단계별 버튼 텍스트 복구
+      const mainBtn = document.getElementById('mainBtn');
+      if (step === 1) {
+        mainBtn.innerText = '나만의 맞춤 식단 매칭하기 →';
+      } else if (step === 2) {
+        mainBtn.innerText = '분석 결과 확인하기';
+      } else if (step === 3) {
+        mainBtn.innerText = '선택한 식단 정기배송 신청하기';
+      }
+
+      window.scrollTo(0, 0);
+    }
 
     function handleHeaderBtnClick() {
       if (isLoggedIn) {
@@ -815,11 +869,13 @@
 
     function handleBtnClick() {
       if (step === 1) {
+        pageHistory.push(step);
         document.getElementById('page1').classList.remove('active');
         document.getElementById('page2').classList.add('active');
         document.getElementById('mainBtn').innerText = '분석 결과 확인하기';
-        window.scrollTo(0, 0);
         step = 2;
+        updateHeaderBackBtn();
+        window.scrollTo(0, 0);
       } else if (step === 2) {
         const nameInput = document.getElementById('dogName');
         const name = nameInput.value.trim() || '아이';
@@ -840,6 +896,7 @@
 
         generateRecipeCards(selectedWorries);
 
+        pageHistory.push(step);
         document.getElementById('resultName').innerText = name;
         document.getElementById('page2').classList.remove('active');
         document.getElementById('loadingPage').style.display = 'block';
@@ -850,8 +907,9 @@
           document.getElementById('page3').classList.add('active');
           document.querySelector('.btn-area').style.display = 'block';
           document.getElementById('mainBtn').innerText = '선택한 식단 정기배송 신청하기';
-          window.scrollTo(0, 0);
           step = 3;
+          updateHeaderBackBtn();
+          window.scrollTo(0, 0);
         }, 1200);
       } else if (step === 3) {
         if(selectedRecipeKeys.size === 0) {
@@ -860,11 +918,13 @@
         }
         
         setDeliveryDate();
+        pageHistory.push(step);
         document.getElementById('page3').classList.remove('active');
         document.getElementById('page4').classList.add('active');
         document.getElementById('mainBtn').innerText = '결제 및 배송 신청 완료';
-        window.scrollTo(0, 0);
         step = 4;
+        updateHeaderBackBtn();
+        window.scrollTo(0, 0);
       } else if (step === 4) {
         const userName = document.getElementById('userName').value.trim();
         const userPhone = document.getElementById('userPhone').value.trim();
