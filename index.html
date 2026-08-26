@@ -397,7 +397,7 @@
         <div class="delivery-info-box">
           <div class="delivery-icon">🚀</div>
           <div class="delivery-text">
-            <h5>첫 배송 예정일 (2일 뒤)</h5>
+            <h5>첫 배송 예정일 (오전 9시 전 주문 시 내일 도착)</h5>
             <p id="deliveryDateText">00월 00일 (요일) 도착</p>
           </div>
         </div>
@@ -564,7 +564,7 @@
 
   <script>
     let step = 1;
-    let pageHistory = []; // 뒤로가기를 위한 히스토리 스택
+    let pageHistory = [];
     let selectedRecipeKeys = new Set();
     let activeModalKey = null;
     let isLoggedIn = false;
@@ -644,7 +644,6 @@
       step = prevStep;
       updateHeaderBackBtn();
 
-      // 단계별 버튼 텍스트 복구
       const mainBtn = document.getElementById('mainBtn');
       if (step === 1) {
         mainBtn.innerText = '나만의 맞춤 식단 매칭하기 →';
@@ -843,7 +842,7 @@
 
     function setDeliveryDate() {
       const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 2);
+      targetDate.setDate(targetDate.getDate() + 1); // 다음날 배송 (+1)
 
       const days = ['일', '월', '화', '수', '목', '금', '토'];
       const month = targetDate.getMonth() + 1;
