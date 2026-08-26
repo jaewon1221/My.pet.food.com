@@ -385,6 +385,11 @@
             <option>1주일에 7일 (매일 신선 식단)</option>
           </select>
         </div>
+
+        <div class="form-section">
+          <label class="q-label" for="shipStartDate">첫 배송 시작일 선택 (달력)</label>
+          <input type="date" id="shipStartDate" class="input-style">
+        </div>
       </div>
 
       <!-- Page 4 -->
@@ -397,7 +402,7 @@
         <div class="delivery-info-box">
           <div class="delivery-icon">🚀</div>
           <div class="delivery-text">
-            <h5>첫 배송 예정일 (오전 9시 전 주문 시 내일 도착)</h5>
+            <h5>선택하신 첫 배송일</h5>
             <p id="deliveryDateText">00월 00일 (요일) 도착</p>
           </div>
         </div>
@@ -624,6 +629,24 @@
       }
     };
 
+    // 오늘 날짜를 YYYY-MM-DD 형식으로 구하여 달력의 기본값 및 최소 선택일로 지정
+    function initDatePicker() {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      const yyyy = tomorrow.getFullYear();
+      const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+      const dd = String(tomorrow.getDate()).padStart(2, '0');
+      
+      const dateInput = document.getElementById('shipStartDate');
+      if (dateInput) {
+        const formattedDate = `${yyyy}-${mm}-${dd}`;
+        dateInput.value = formattedDate;
+        dateInput.min = formattedDate; // 오늘 이후부터 선택 가능
+      }
+    }
+
     function updateHeaderBackBtn() {
       const backBtn = document.getElementById('backBtn');
       if (step > 1) {
@@ -840,10 +863,12 @@
       closeModal('recipeModal');
     }
 
+    // 달력에서 선택한 날짜를 가져와서 요일과 함께 화면에 표시
     function setDeliveryDate() {
-      const targetDate = new Date();
-      targetDate.setDate(targetDate.getDate() + 1); // 다음날 배송 (+1)
+      const dateInputVal = document.getElementById('shipStartDate').value;
+      if (!dateInputVal) return;
 
+      const targetDate = new Date(dateInputVal);
       const days = ['일', '월', '화', '수', '목', '금', '토'];
       const month = targetDate.getMonth() + 1;
       const date = targetDate.getDate();
@@ -855,6 +880,8 @@
     function processPayment() {
       const selectedPayMethod = document.querySelector('input[name="payMethod"]:checked').value;
       const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title);
+      const cycleVal = document.getElementById('shipCycle').value;
+      const dateVal = document.getElementById('shipStartDate').value;
       
       if (selectedTitles.length === 0) {
         alert('선택된 레시피가 없습니다. 하나 이상의 식단을 선택해 주세요!');
@@ -863,7 +890,7 @@
       }
 
       closeModal('paymentModal');
-      alert(`[${selectedPayMethod} 결제 완료]\n\n선택 식단:\n- ${selectedTitles.join('\n- ')}\n\n정기배송 신청이 완료되었습니다!`);
+      alert(`[${selectedPayMethod} 결제 완료]\n\n- 선택 식단: ${selectedTitles.join(', ')}\n- 배송 주기: ${cycleVal}\n- 첫 배송일: ${dateVal}\n\n정기배송 신청이 완료되었습니다!`);
     }
 
     function handleBtnClick() {
@@ -894,6 +921,7 @@
         const selectedWorries = Array.from(worryCheckboxes).map(cb => cb.value);
 
         generateRecipeCards(selectedWorries);
+        initDatePicker(); // 결과 화면 진입 시 달력 기본 날짜 세팅
 
         pageHistory.push(step);
         document.getElementById('resultName').innerText = name;
