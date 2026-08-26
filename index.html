@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>우리아이 맞춤식단</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; }
+    body { background-color: #f8f6f0; color: #333; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 430px; background: #fff; min-height: 100vh; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.05); padding-bottom: 90px; }
+    
+    .header { text-align: center; padding: 20px 0; font-weight: bold; font-size: 1.2rem; color: #2d4a22; }
+    
+    .page { display: none; }
+    .page.active { display: block; }
+    
+    .title { font-size: 1.5rem; font-weight: bold; text-align: center; margin-bottom: 10px; line-height: 1.3; color: #1f3317; }
+    .subtitle { text-align: center; color: #666; font-size: 0.95rem; margin-bottom: 25px; }
+    
+    .form-group { margin-bottom: 20px; background: #fdfbf7; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #2d4a22; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+    .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .checkbox-group label { font-weight: normal; background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #ddd; text-align: center; cursor: pointer; }
+    
+    .btn { width: 100%; padding: 15px; background-color: #3b2314; color: #fff; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; text-align: center; }
+    .btn-fixed { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 40px); max-width: 390px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
+    
+    .card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+    .card-title { font-weight: bold; font-size: 1.05rem; }
+    .card-badge { background: #eef5eb; color: #2d4a22; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">🐾 우리아이 맞춤식단</div>
+
+    <!-- 1. 랜딩 페이지 -->
+    <div id="page1" class="page active">
+      <h2 class="title">좋은 거 먹이고 싶은데<br>어디서 알아보지?</h2>
+      <p class="subtitle">걱정 없는 우리 아이 맞춤 한 끼, 이제 고민하지 마세요!</p>
+      <div style="text-align: center; margin: 40px 0;">
+        <p style="font-size: 4rem;">🐶🥣</p>
+      </div>
+      <button class="btn btn-fixed" onclick="nextPage(2)">맞춤 식단 추천받기 ➔</button>
+    </div>
+
+    <!-- 2. 설문 페이지 -->
+    <div id="page2" class="page">
+      <h2 class="title" style="font-size: 1.2rem; margin-bottom: 20px;">맞춤식단 만들기 (1/2)</h2>
+      
+      <div class="form-group">
+        <label for="dogName">1. 우리 아이 이름은?</label>
+        <input type="text" id="dogName" placeholder="예: 콩이">
+      </div>
+
+      <div class="form-group">
+        <label for="dogAge">2. 나이는?</label>
+        <select id="dogAge">
+          <option value="1">1세 미만 (퍼피)</option>
+          <option value="3" selected>1세 ~ 7세 (성견)</option>
+          <option value="8">8세 이상 (시니어)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>3. 알레르기가 있나요?</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="allergy" value="닭고기"> 닭고기</label>
+          <label><input type="checkbox" name="allergy" value="소고기"> 소고기</label>
+          <label><input type="checkbox" name="allergy" value="밀"> 밀</label>
+          <label><input type="checkbox" name="allergy" value="없음"> 없음</label>
+        </div>
+      </div>
+
+      <button class="btn" style="margin-top: 10px;" onclick="submitSurvey()">결과 보기 ➔</button>
+    </div>
+
+    <!-- 3. 결과 페이지 -->
+    <div id="page3" class="page">
+      <h2 class="title" style="font-size: 1.3rem;"><span id="resultName">콩이</span>만을 위한<br>맞춤 식단 추천</h2>
+      <p class="subtitle">알레르기 성분을 제외한 안전한 레시피입니다.</p>
+
+      <div class="card">
+        <div>
+          <div class="card-title">연어 레시피</div>
+          <div style="font-size: 0.85rem; color: #777;">피부·피모 개선에 도움</div>
+        </div>
+        <span class="card-badge">추천 01</span>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-title">오리 레시피</div>
+          <div style="font-size: 0.85rem; color: #777;">소화 흡수율 강화</div>
+        </div>
+        <span class="card-badge">추천 02</span>
+      </div>
+
+      <div class="form-group" style="margin-top: 25px;">
+        <label>배송주기 선택</label>
+        <select>
+          <option>2주에 한 번</option>
+          <option>4주에 한 번</option>
+        </select>
+      </div>
+
+      <button class="btn btn-fixed" onclick="alert('정기배송 신청이 완료되었습니다!')">정기배송 시작하기 ➔</button>
+    </div>
+  </div>
+
+  <script>
+    function nextPage(pageNum) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page' + pageNum).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function submitSurvey() {
+      const name = document.getElementById('dogName').value || '우리 아이';
+      document.getElementById('resultName').innerText = name;
+      nextPage(3);
+    }
+  </script>
+</body>
+</html>
