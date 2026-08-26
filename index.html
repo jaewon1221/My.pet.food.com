@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- 브라우저 캐시 방지 태그 (최신 코드 즉시 반영) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -123,20 +122,37 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 결과 카드 스타일 */
+    /* 레시피 카드 스타일 */
     .result-card {
-      background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px;
+      background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 2px solid #eaeaea;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; position: relative; transition: all 0.2s;
     }
-    .result-card:active { background-color: #f9f9f9; }
-    .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; pointer-events: none; }
+    .result-card.selected {
+      border-color: var(--primary-color);
+      background-color: #f5f9f3;
+      box-shadow: 0 8px 20px rgba(45,74,34,0.12);
+    }
+    .card-radio {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ccc;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .result-card.selected .card-radio {
+      border-color: var(--primary-color); background-color: var(--primary-color);
+    }
+    .result-card.selected .card-radio::after {
+      content: ''; width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    }
+    .card-icon { font-size: 1.8rem; background: #f8f6f0; padding: 8px; border-radius: 12px; pointer-events: none; }
     .card-info { flex: 1; pointer-events: none; }
-    .card-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
-    .card-info p { font-size: 0.85rem; color: #777; }
+    .card-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
+    .card-info p { font-size: 0.8rem; color: #777; }
     .match-tag {
-      background: #eef5eb; color: var(--primary-color); padding: 5px 8px;
+      background: #eef5eb; color: var(--primary-color); padding: 4px 8px;
       border-radius: 8px; font-size: 0.75rem; font-weight: 700; white-space: nowrap; pointer-events: none;
+    }
+    .btn-detail-view {
+      font-size: 0.75rem; color: #888; text-decoration: underline; margin-top: 4px; display: inline-block; cursor: pointer;
     }
     
     #loadingPage { display: none; text-align: center; padding-top: 80px; }
@@ -180,6 +196,11 @@
     .modal-body ul { list-style: none; margin-top: 15px; }
     .modal-body li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
     .modal-body li span { font-weight: 700; color: #222; }
+    
+    .btn-select-recipe {
+      width: 100%; margin-top: 18px; padding: 12px; background: var(--primary-color);
+      color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    }
 
   </style>
 </head>
@@ -260,31 +281,61 @@
       <!-- Page 3 -->
       <div id="page3" class="page">
         <div class="title-area">
-          <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>매칭 레시피입니다</h1>
-          <p class="sub-title">👇 카드를 클릭하시면 상세 레시피를 보실 수 있습니다.</p>
+          <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>맞춤 레시피입니다</h1>
+          <p class="sub-title">원하시는 레시피를 선택해 주세요.</p>
         </div>
 
-        <div class="result-card" onclick="openModal('salmon')">
+        <!-- 1. 연어 카드 -->
+        <div class="result-card" id="card-salmon" onclick="selectCard('salmon')">
+          <div class="card-radio"></div>
           <div class="card-icon">🐟</div>
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
             <p>피부 건강 & 눈물 개선 전용</p>
+            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('salmon');">상세보기 ></span>
           </div>
           <div class="match-tag">98% Match</div>
         </div>
 
-        <div class="result-card" onclick="openModal('duck')">
+        <!-- 2. 오리 카드 -->
+        <div class="result-card" id="card-duck" onclick="selectCard('duck')">
+          <div class="card-radio"></div>
           <div class="card-icon">🦆</div>
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
             <p>소화 유산균 & 영양 설계</p>
+            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('duck');">상세보기 ></span>
           </div>
           <div class="match-tag">92% Match</div>
+        </div>
+
+        <!-- 3. 소고기 카드 (신규 추가) -->
+        <div class="result-card" id="card-beef" onclick="selectCard('beef')">
+          <div class="card-radio"></div>
+          <div class="card-icon">🥩</div>
+          <div class="card-info">
+            <h4>에너지 비프 레시피</h4>
+            <p>근육 강화 & 기력 회복</p>
+            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('beef');">상세보기 ></span>
+          </div>
+          <div class="match-tag">88% Match</div>
+        </div>
+
+        <!-- 4. 닭고기 카드 (신규 추가) -->
+        <div class="result-card" id="card-chicken" onclick="selectCard('chicken')">
+          <div class="card-radio"></div>
+          <div class="card-icon">🍗</div>
+          <div class="card-info">
+            <h4>슬림 치킨 레시피</h4>
+            <p>저지방 고단백 & 체중관리</p>
+            <span class="btn-detail-view" onclick="event.stopPropagation(); openModal('chicken');">상세보기 ></span>
+          </div>
+          <div class="match-tag">85% Match</div>
         </div>
         
         <div class="form-section" style="margin-top:20px;">
           <label class="q-label">배송 주기 설정</label>
-          <select class="input-style">
+          <select class="input-style" id="shipCycle">
             <option>2주에 한 번 (가장 인기)</option>
             <option>4주에 한 번</option>
           </select>
@@ -320,12 +371,15 @@
           <li>조지방 <span id="modalFat">-</span></li>
           <li>칼로리 <span id="modalCal">-</span></li>
         </ul>
+        <button id="modalSelectBtn" class="btn-select-recipe" onclick="applyModalSelection()">이 레시피 선택하기</button>
       </div>
     </div>
   </div>
 
   <script>
     let step = 1;
+    let selectedRecipeKey = null;
+    let activeModalKey = null;
 
     const dataMap = {
       salmon: {
@@ -347,13 +401,41 @@
         protein: '26.0% 이상',
         fat: '12.0% 이상',
         cal: '3,500 kcal/kg'
+      },
+      beef: {
+        icon: '🥩',
+        title: '에너지 비프 레시피',
+        sub: '근육 강화 & 기력 회복',
+        desc: '철분과 필수 아미노산이 풍부한 청정 호주산 소고기를 사용하여 활동량이 많은 아이들의 근육 형성과 면역력 증진을 돕습니다.',
+        ing: '호주산 소홍두깨살, 브로콜리, 당근',
+        protein: '30.0% 이상',
+        fat: '15.0% 이상',
+        cal: '3,800 kcal/kg'
+      },
+      chicken: {
+        icon: '🍗',
+        title: '슬림 치킨 레시피',
+        sub: '저지방 고단백 & 체중관리',
+        desc: '지방 함량이 적은 닭가슴살 위주로 구성되어 칼로리 조절이 필요하거나 슬개골 관절 부담을 줄여주어야 하는 아이에게 최적입니다.',
+        ing: '국내산 닭가슴살, 양배추, 사과',
+        protein: '32.0% 이상',
+        fat: '8.0% 이하',
+        cal: '3,300 kcal/kg'
       }
     };
+
+    function selectCard(key) {
+      selectedRecipeKey = key;
+      document.querySelectorAll('.result-card').forEach(card => card.classList.remove('selected'));
+      const target = document.getElementById('card-' + key);
+      if(target) target.classList.add('selected');
+    }
 
     function openModal(type) {
       const item = dataMap[type];
       if (!item) return;
 
+      activeModalKey = type;
       document.getElementById('modalIcon').innerText = item.icon;
       document.getElementById('modalTitle').innerText = item.title;
       document.getElementById('modalSub').innerText = item.sub;
@@ -368,6 +450,13 @@
 
     function closeModal() {
       document.getElementById('recipeModal').style.display = 'none';
+    }
+
+    function applyModalSelection() {
+      if(activeModalKey) {
+        selectCard(activeModalKey);
+      }
+      closeModal();
     }
 
     function handleBtnClick() {
@@ -393,12 +482,17 @@
           document.getElementById('loadingPage').style.display = 'none';
           document.getElementById('page3').classList.add('active');
           document.querySelector('.btn-area').style.display = 'block';
-          document.getElementById('mainBtn').innerText = '정기배송 시작하기';
+          document.getElementById('mainBtn').innerText = '선택한 식단 정기배송 시작하기';
           window.scrollTo(0, 0);
           step = 3;
         }, 1500);
       } else if (step === 3) {
-        alert('정기배송 신청이 완료되었습니다!');
+        if(!selectedRecipeKey) {
+          alert('원하시는 레시피를 선택해 주세요!');
+          return;
+        }
+        const recipeName = dataMap[selectedRecipeKey].title;
+        alert(`[${recipeName}] 선택이 완료되었습니다!\n정기배송 신청 페이지로 이동합니다.`);
       }
     }
   </script>
