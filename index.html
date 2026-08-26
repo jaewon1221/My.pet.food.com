@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- 브라우저 캐시 방지 태그 -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -131,7 +130,7 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 레시피 카드 스타일 */
+    /* 레시피 카드 스타일 (다중 선택 대응) */
     .result-card {
       background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 2px solid #eaeaea;
@@ -142,15 +141,16 @@
       background-color: #f5f9f3;
       box-shadow: 0 8px 20px rgba(45,74,34,0.12);
     }
-    .card-radio {
-      width: 22px; height: 22px; border-radius: 50%; border: 2px solid #ccc;
+    .card-checkbox {
+      width: 22px; height: 22px; border-radius: 6px; border: 2px solid #ccc;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: all 0.2s;
     }
-    .result-card.selected .card-radio {
+    .result-card.selected .card-checkbox {
       border-color: var(--primary-color); background-color: var(--primary-color);
     }
-    .result-card.selected .card-radio::after {
-      content: ''; width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    .result-card.selected .card-checkbox::after {
+      content: '✓'; color: #fff; font-size: 14px; font-weight: bold;
     }
     .card-icon { font-size: 1.8rem; background: #f8f6f0; padding: 8px; border-radius: 12px; }
     .card-info { flex: 1; }
@@ -170,6 +170,15 @@
       border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 배송 정보 박스 */
+    .delivery-info-box {
+      background: #f8f9fa; border: 1.5px solid #e2e8f0; border-radius: 16px;
+      padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+    }
+    .delivery-icon { font-size: 2rem; }
+    .delivery-text h5 { font-size: 0.9rem; color: #666; font-weight: 600; }
+    .delivery-text p { font-size: 1.1rem; color: var(--primary-color); font-weight: 800; margin-top: 2px; }
 
     /* 레시피 모달 스타일 */
     .modal-overlay {
@@ -221,7 +230,6 @@
     </header>
 
     <div class="app-content">
-      <!-- Page 1 -->
       <div id="page1" class="page active">
         <div class="title-area">
           <h1 class="main-title">좋은 거 먹이고 싶은데<br><span class="highlight">어디서 알아보지?</span></h1>
@@ -233,7 +241,6 @@
         </div>
       </div>
 
-      <!-- Page 2 -->
       <div id="page2" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">아이의 정보를 입력해 주세요</h1>
@@ -281,22 +288,19 @@
         </div>
       </div>
       
-      <!-- Loading -->
       <div id="loadingPage">
         <div class="spinner"></div>
         <p style="font-weight:700; font-size:1.1rem;">우리 아이 데이터를<br>정밀 분석 중입니다...</p>
       </div>
 
-      <!-- Page 3 -->
       <div id="page3" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>맞춤 레시피입니다</h1>
-          <p class="sub-title">원하시는 레시피를 선택해 주세요.</p>
+          <p class="sub-title">원하시는 레시피를 선택해 주세요 (중복 선택 가능)</p>
         </div>
 
-        <!-- 1. 연어 카드 -->
-        <div class="result-card" id="card-salmon" onclick="selectCard('salmon')">
-          <div class="card-radio"></div>
+        <div class="result-card" id="card-salmon" onclick="toggleCard('salmon')">
+          <div class="card-checkbox"></div>
           <div class="card-icon">🐟</div>
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
@@ -306,9 +310,8 @@
           <div class="match-tag">98% Match</div>
         </div>
 
-        <!-- 2. 오리 카드 -->
-        <div class="result-card" id="card-duck" onclick="selectCard('duck')">
-          <div class="card-radio"></div>
+        <div class="result-card" id="card-duck" onclick="toggleCard('duck')">
+          <div class="card-checkbox"></div>
           <div class="card-icon">🦆</div>
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
@@ -318,9 +321,8 @@
           <div class="match-tag">92% Match</div>
         </div>
 
-        <!-- 3. 소고기 카드 -->
-        <div class="result-card" id="card-beef" onclick="selectCard('beef')">
-          <div class="card-radio"></div>
+        <div class="result-card" id="card-beef" onclick="toggleCard('beef')">
+          <div class="card-checkbox"></div>
           <div class="card-icon">🥩</div>
           <div class="card-info">
             <h4>에너지 비프 레시피</h4>
@@ -330,9 +332,8 @@
           <div class="match-tag">88% Match</div>
         </div>
 
-        <!-- 4. 닭고기 카드 -->
-        <div class="result-card" id="card-chicken" onclick="selectCard('chicken')">
-          <div class="card-radio"></div>
+        <div class="result-card" id="card-chicken" onclick="toggleCard('chicken')">
+          <div class="card-checkbox"></div>
           <div class="card-icon">🍗</div>
           <div class="card-info">
             <h4>슬림 치킨 레시피</h4>
@@ -350,9 +351,40 @@
           </select>
         </div>
       </div>
+
+      <div id="page4" class="page">
+        <div class="title-area">
+          <h1 class="main-title" style="font-size:1.4rem;">배송지 정보를 입력해 주세요</h1>
+          <p class="sub-title">신선한 맞춤 식단을 정기적으로 배송해 드립니다.</p>
+        </div>
+
+        <div class="delivery-info-box">
+          <div class="delivery-icon">🚀</div>
+          <div class="delivery-text">
+            <h5>첫 배송 예정일 (2일 뒤)</h5>
+            <p id="deliveryDateText">00월 00일 (요일) 도착</p>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <label class="q-label" for="userName">수령인 성함</label>
+          <input type="text" id="userName" class="input-style" placeholder="이름을 입력해 주세요">
+        </div>
+
+        <div class="form-section">
+          <label class="q-label" for="userPhone">연락처</label>
+          <input type="tel" id="userPhone" class="input-style" placeholder="010-0000-0000">
+        </div>
+
+        <div class="form-section">
+          <label class="q-label" for="userAddress">배송지 주소</label>
+          <input type="text" id="userAddress" class="input-style" placeholder="도로명 주소 입력">
+          <input type="text" id="userAddressDetail" class="input-style" placeholder="상세 주소 입력" style="margin-top:8px;">
+        </div>
+      </div>
+
     </div>
 
-    <!-- 버튼 -->
     <div class="btn-area">
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기 →
@@ -360,7 +392,6 @@
     </div>
   </div>
 
-  <!-- 레시피 모달 -->
   <div id="recipeModal" class="modal-overlay" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal()">✕</button>
@@ -379,14 +410,14 @@
           <li>조지방 <span id="modalFat">-</span></li>
           <li>칼로리 <span id="modalCal">-</span></li>
         </ul>
-        <button id="modalSelectBtn" class="btn-select-recipe" onclick="applyModalSelection()">이 레시피 선택하기</button>
+        <button id="modalSelectBtn" class="btn-select-recipe" onclick="applyModalSelection()">이 레시피 선택 / 해제</button>
       </div>
     </div>
   </div>
 
   <script>
     let step = 1;
-    let selectedRecipeKey = null;
+    let selectedRecipeKeys = new Set(); // 다중 선택을 위해 Set 사용
     let activeModalKey = null;
 
     const dataMap = {
@@ -408,7 +439,7 @@
         ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
-        cal: '350 kcal/g'
+        cal: '350kcal/100g'
       },
       beef: {
         icon: '🥩',
@@ -418,7 +449,7 @@
         ing: '호주산 소홍두깨살, 브로콜리, 당근',
         protein: '30.0% 이상',
         fat: '15.0% 이상',
-        cal: '3,00kcal/100g'
+        cal: '380 kcal/100g'
       },
       chicken: {
         icon: '🍗',
@@ -432,11 +463,16 @@
       }
     };
 
-    function selectCard(key) {
-      selectedRecipeKey = key;
-      document.querySelectorAll('.result-card').forEach(card => card.classList.remove('selected'));
+    // 레시피 카드 다중 토글 선택
+    function toggleCard(key) {
       const target = document.getElementById('card-' + key);
-      if(target) target.classList.add('selected');
+      if (selectedRecipeKeys.has(key)) {
+        selectedRecipeKeys.delete(key);
+        if(target) target.classList.remove('selected');
+      } else {
+        selectedRecipeKeys.add(key);
+        if(target) target.classList.add('selected');
+      }
     }
 
     function openModal(type) {
@@ -462,9 +498,22 @@
 
     function applyModalSelection() {
       if(activeModalKey) {
-        selectCard(activeModalKey);
+        toggleCard(activeModalKey);
       }
       closeModal();
+    }
+
+    // 2일 뒤 배송 예정일 계산
+    function setDeliveryDate() {
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 2);
+
+      const days = ['일', '월', '화', '수', '목', '금', '토'];
+      const month = targetDate.getMonth() + 1;
+      const date = targetDate.getDate();
+      const dayName = days[targetDate.getDay()];
+
+      document.getElementById('deliveryDateText').innerText = `${month}월 ${date}일 (${dayName}) 도착 예정`;
     }
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -503,17 +552,33 @@
           document.getElementById('loadingPage').style.display = 'none';
           document.getElementById('page3').classList.add('active');
           document.querySelector('.btn-area').style.display = 'block';
-          document.getElementById('mainBtn').innerText = '선택한 식단 정기배송 시작하기';
+          document.getElementById('mainBtn').innerText = '선택한 식단 정기배송 신청하기';
           window.scrollTo(0, 0);
           step = 3;
         }, 1500);
       } else if (step === 3) {
-        if(!selectedRecipeKey) {
-          alert('원하시는 레시피를 선택해 주세요!');
+        if(selectedRecipeKeys.size === 0) {
+          alert('하나 이상의 레시피를 선택해 주세요!');
           return;
         }
-        const recipeName = dataMap[selectedRecipeKey].title;
-        alert(`[${recipeName}] 선택이 완료되었습니다!\n정기배송 신청 페이지로 이동합니다.`);
+        
+        setDeliveryDate();
+        document.getElementById('page3').classList.remove('active');
+        document.getElementById('page4').classList.add('active');
+        document.getElementById('mainBtn').innerText = '결제 및 배송 신청 완료';
+        window.scrollTo(0, 0);
+        step = 4;
+      } else if (step === 4) {
+        const userName = document.getElementById('userName').value;
+        const userAddress = document.getElementById('userAddress').value;
+
+        if(!userName || !userAddress) {
+          alert('수령인 성함과 배송지 주소를 입력해 주세요!');
+          return;
+        }
+
+        const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title).join(', ');
+        alert(`[${selectedTitles}]\n정기배송 신청이 완료되었습니다!`);
       }
     }
   </script>
