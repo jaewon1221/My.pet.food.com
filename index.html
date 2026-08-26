@@ -19,7 +19,6 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    /* 스크롤 허용을 위해 html, body 고정 해제 */
     html, body {
       width: 100%;
       min-height: 100%;
@@ -27,7 +26,6 @@
       color: var(--text-color);
     }
     
-    /* 메인 앱 컨테이너 */
     .app-container {
       width: 100%;
       max-width: 430px;
@@ -40,7 +38,6 @@
       flex-direction: column;
     }
     
-    /* 상단 헤더 고정 */
     .app-header {
       text-align: center;
       padding: 18px 0;
@@ -54,13 +51,11 @@
       z-index: 100;
     }
     
-    /* 콘텐츠 영역: 하단 버튼에 가리지 않도록 바닥 여백(padding-bottom)을 160px 부여 */
     .app-content {
       flex: 1;
       padding: 25px 25px 160px 25px;
     }
     
-    /* 페이지 제어 */
     .page { display: none; width: 100%; }
     .page.active { display: block; animation: fadeIn 0.3s ease; }
     
@@ -69,13 +64,11 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* 타이틀 스타일 */
     .title-area { text-align: center; margin-bottom: 25px; }
     .main-title { font-size: 1.6rem; font-weight: 800; line-height: 1.3; color: #000; margin-bottom: 8px; word-break: keep-all; }
     .highlight { color: var(--primary-color); }
     .sub-title { color: #666; font-size: 0.95rem; font-weight: 400; line-height: 1.5; }
     
-    /* 히어로 일러스트 */
     .hero-graphic {
       text-align: center; margin: 40px 0; position: relative; animation: floating 3s ease-in-out infinite;
     }
@@ -85,7 +78,6 @@
       100% { transform: translatey(0px); }
     }
     
-    /* 설문 폼 스타일 */
     .form-section { margin-bottom: 24px; }
     .q-label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 10px; color: var(--text-color); }
     .input-style {
@@ -94,7 +86,6 @@
     }
     .input-style:focus { border-color: var(--primary-color); outline: none; background: #fff; }
     
-    /* 체크박스/라디오 버튼 */
     .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
@@ -108,7 +99,6 @@
       transform: scale(1.01); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
     }
     
-    /* 하단 고정 버튼 영역 */
     .btn-area {
       position: fixed;
       bottom: 0;
@@ -128,11 +118,15 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 결과 카드 */
+    /* 결과 카드 (클릭 가능하도록 스타일 추가) */
     .result-card {
       background: #fff; border-radius: 20px; padding: 18px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .result-card:hover, .result-card:active {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
     }
     .card-icon { font-size: 2rem; background: #f8f6f0; padding: 10px; border-radius: 14px; }
     .card-info { flex: 1; }
@@ -150,6 +144,46 @@
       border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 레시피 상세 모달 팝업 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 380px;
+      padding: 24px;
+      position: relative;
+      animation: modalUp 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    @keyframes modalUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px; right: 20px;
+      font-size: 1.4rem;
+      background: none; border: none; cursor: pointer; color: #888;
+    }
+    .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .modal-icon { font-size: 2.5rem; background: #f8f6f0; padding: 12px; border-radius: 16px; }
+    .modal-title h3 { font-size: 1.2rem; font-weight: 800; color: #000; }
+    .modal-title p { font-size: 0.85rem; color: var(--primary-color); font-weight: 600; margin-top: 2px; }
+    .modal-body { font-size: 0.9rem; color: #444; line-height: 1.6; }
+    .modal-body ul { list-style: none; margin-top: 10px; }
+    .modal-body li { padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; }
+    .modal-body li span { font-weight: 700; color: #222; }
 
   </style>
 </head>
@@ -234,7 +268,8 @@
           <p class="sub-title">가장 높은 매칭률을 보이는 퍼스널 푸드입니다.</p>
         </div>
 
-        <div class="result-card">
+        <!-- 연어 레시피 카드 (클릭 이벤트 연결) -->
+        <div class="result-card" onclick="openRecipeModal('salmon')">
           <div class="card-icon">🐟</div>
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
@@ -243,7 +278,8 @@
           <div class="match-tag">98% Match</div>
         </div>
 
-        <div class="result-card">
+        <!-- 오리 레시피 카드 (클릭 이벤트 연결) -->
+        <div class="result-card" onclick="openRecipeModal('duck')">
           <div class="card-icon">🦆</div>
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
@@ -271,8 +307,75 @@
     </div>
   </div>
 
+  <!-- 레시피 상세 모달 -->
+  <div id="recipeModal" class="modal-overlay" onclick="closeRecipeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      <div class="modal-header">
+        <div id="modalIcon" class="modal-icon">🐟</div>
+        <div class="modal-title">
+          <h3 id="modalTitle">프리미엄 연어 레시피</h3>
+          <p id="modalSub">피부 건강 & 눈물 개선 전용</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p id="modalDesc">신선한 알래스카 연어를 사용하여 풍부한 오메가-3와 6 성분이 피부 알레르기 반응을 완화하고 모질을 모질 개선에 도움을 줍니다.</p>
+        <ul style="margin-top:15px;">
+          <li>주재료 <span id="modalIng">알래스카 생연어, 고구마, 블루베리</span></li>
+          <li>조단백질 <span id="modalProtein">28.0% 이상</span></li>
+          <li>조지방 <span id="modalFat">14.0% 이상</span></li>
+          <li>칼로리 <span id="modalCal">3,650 kcal/kg</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
   <script>
     let step = 1;
+
+    // 레시피 데이터 정의
+    const recipeData = {
+      salmon: {
+        icon: '🐟',
+        title: '프리미엄 연어 레시피',
+        sub: '피부 건강 & 눈물 개선 전용',
+        desc: '신선한 알래스카 연어를 사용하여 풍부한 오메가-3 및 6 지방산이 피모 건강을 돕고 알레르기 유발 물질을 최소화하여 눈물 자국을 완화해 줍니다.',
+        ing: '알래스카 생연어, 고구마, 당근, 블루베리',
+        protein: '28.0% 이상',
+        fat: '14.0% 이상',
+        cal: '3,650 kcal/kg'
+      },
+      duck: {
+        icon: '🦆',
+        title: '센시티브 오리 레시피',
+        sub: '소화 유산균 & 영양 설계',
+        desc: '불포화지방산이 풍부한 국내산 오리고기와 체내 흡수율이 높은 생유산균을 배합하여 장 건강을 개선하고 소화 불량을 줄여줍니다.',
+        ing: '국내산 오리가슴살, 단호박, 사과, 유산균',
+        protein: '26.0% 이상',
+        fat: '12.0% 이상',
+        cal: '3,500 kcal/kg'
+      }
+    };
+
+    function openRecipeModal(type) {
+      const data = recipeData[type];
+      if (!data) return;
+
+      document.getElementById('modalIcon').innerText = data.icon;
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalSub').innerText = data.sub;
+      document.getElementById('modalDesc').innerText = data.desc;
+      document.getElementById('modalIng').innerText = data.ing;
+      document.getElementById('modalProtein').innerText = data.protein;
+      document.getElementById('modalFat').innerText = data.fat;
+      document.getElementById('modalCal').innerText = data.cal;
+
+      document.getElementById('recipeModal').style.display = 'flex';
+    }
+
+    function closeRecipeModal(e) {
+      document.getElementById('recipeModal').style.display = 'none';
+    }
 
     function handleBtnClick() {
       if (step === 1) {
