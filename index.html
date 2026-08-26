@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
+  <!-- 캐시 완전 방지 메타 태그 -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -42,7 +43,7 @@
       flex-direction: column;
     }
     
-    /* 상단 헤더: 항시 노출 보장 */
+    /* 상단 헤더: 최상단 고정 및 강제 표시 */
     .app-header {
       display: flex !important;
       justify-content: space-between !important;
@@ -52,22 +53,26 @@
       font-size: 1.2rem;
       color: var(--primary-color);
       border-bottom: 1px solid #eaeaea;
-      background: #fff;
+      background: #ffffff !important;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 9999 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
     
     .btn-login-open {
       display: inline-block !important;
       font-size: 0.85rem;
       font-weight: 600;
-      color: #555;
+      color: #333;
       background: #f0f0f0;
-      border: none;
-      padding: 6px 12px;
+      border: 1px solid #ddd;
+      padding: 6px 14px;
       border-radius: 20px;
       cursor: pointer;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
     
     .app-content {
@@ -145,7 +150,7 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); }
     
-    /* 레시피 카드 스타일 */
+    /* 레시피 카드 */
     .result-card {
       background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 2px solid #eaeaea;
@@ -194,7 +199,7 @@
     .delivery-text h5 { font-size: 0.9rem; color: #666; font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--primary-color); font-weight: 800; margin-top: 2px; }
 
-    /* 모달 공통 및 오버레이 전역 스타일 */
+    /* 모달 기본 레이아웃 */
     .modal-overlay {
       display: none;
       position: fixed !important;
@@ -234,39 +239,24 @@
       width: 100%; margin-top: 18px; padding: 12px; background: var(--primary-color); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
     }
 
-    /* 로그인 모달 전용 스타일 */
-    .login-tabs {
-      display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; margin-top: 10px;
-    }
-    .login-tab {
-      flex: 1; text-align: center; padding: 10px; font-weight: 700; color: #aaa; cursor: pointer;
-    }
-    .login-tab.active {
-      color: var(--primary-color); border-bottom: 2px solid var(--primary-color); margin-bottom: -2px;
-    }
+    /* 로그인 모달 */
+    .login-tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 20px; margin-top: 10px; }
+    .login-tab { flex: 1; text-align: center; padding: 10px; font-weight: 700; color: #aaa; cursor: pointer; }
+    .login-tab.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); margin-bottom: -2px; }
     .login-form-group { margin-bottom: 12px; }
-    .login-form-group input {
-      width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 0.95rem;
-    }
+    .login-form-group input { width: 100%; padding: 12px 14px; border: 1.5px solid #e0e0e0; border-radius: 10px; font-size: 0.95rem; }
     .login-form-group input:focus { border-color: var(--primary-color); outline: none; }
-    .btn-submit-login {
-      width: 100%; padding: 14px; background-color: var(--primary-color); color: #fff;
-      border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 8px;
-    }
-    .sns-login-area {
-      margin-top: 20px; text-align: center; border-top: 1px dashed #e0e0e0; padding-top: 16px;
-    }
+    .btn-submit-login { width: 100%; padding: 14px; background-color: var(--primary-color); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 8px; }
+    .sns-login-area { margin-top: 20px; text-align: center; border-top: 1px dashed #e0e0e0; padding-top: 16px; }
     .sns-title { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
-    .btn-sns-kakao {
-      width: 100%; padding: 12px; background: #FEE500; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
-    }
+    .btn-sns-kakao { width: 100%; padding: 12px; background: #FEE500; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
-    <!-- 헤더 영역: 모든 화면에서 항시 노출 -->
-    <header class="app-header">
+    <!-- 헤더: 강제 노출 -->
+    <header class="app-header" id="mainHeader">
       <span>🐾 멍마카세</span>
       <button class="btn-login-open" id="loginHeaderBtn" onclick="openLoginModal()">로그인</button>
     </header>
@@ -338,10 +328,10 @@
         <p style="font-weight:700; font-size:1.1rem;">우리 아이 데이터를<br>정밀 분석 중입니다...</p>
       </div>
 
-      <!-- Page 3 (맞춤 식단 선택) -->
+      <!-- Page 3 -->
       <div id="page3" class="page">
         <div class="title-area">
-          <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>맞춤 레시피입니다</h1>
+          <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">아이</span>를 위한<br>맞춤 레시피입니다</h1>
           <p class="sub-title">원하시는 레시피를 선택해 주세요 (중복 선택 가능)</p>
         </div>
 
@@ -422,7 +412,7 @@
     </div>
   </div>
 
-  <!-- 로그인 / 회원가입 모달 -->
+  <!-- 로그인 모달 -->
   <div id="loginModal" class="modal-overlay" onclick="closeModal('loginModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
@@ -432,7 +422,6 @@
         <div id="tabSignup" class="login-tab" onclick="switchLoginTab('signup')">회원가입</div>
       </div>
 
-      <!-- 로그인 폼 -->
       <div id="loginForm">
         <div class="login-form-group">
           <input type="email" id="loginEmail" placeholder="이메일 계정">
@@ -443,7 +432,6 @@
         <button class="btn-submit-login" onclick="handleLogin()">로그인</button>
       </div>
 
-      <!-- 회원가입 폼 -->
       <div id="signupForm" style="display:none;">
         <div class="login-form-group">
           <input type="text" id="signupName" placeholder="이름">
@@ -480,7 +468,7 @@
         ing: '알래스카 생연어, 고구마, 블루베리',
         protein: '28.0% 이상',
         fat: '14.0% 이상',
-        cal: '365 kcal/100kg',
+        cal: '3,650 kcal/kg',
         targets: ['피부', '눈물'],
         baseScore: 72
       },
@@ -493,7 +481,7 @@
         ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
-        cal: '350 kcal/100g',
+        cal: '3,500 kcal/kg',
         targets: ['소화'],
         baseScore: 70
       },
@@ -506,7 +494,7 @@
         ing: '호주산 소홍두깨살, 브로콜리, 당근',
         protein: '30.0% 이상',
         fat: '15.0% 이상',
-        cal: '380 kcal/100g',
+        cal: '3,800 kcal/kg',
         targets: ['관절'],
         baseScore: 68
       },
@@ -519,13 +507,12 @@
         ing: '국내산 닭가슴살, 양배추, 사과',
         protein: '32.0% 이상',
         fat: '8.0% 이하',
-        cal: '330 kcal/100g',
+        cal: '3,300 kcal/kg',
         targets: ['관절', '소화'],
         baseScore: 65
       }
     };
 
-    /* 로그인 모달 제어 */
     function openLoginModal() {
       const modal = document.getElementById('loginModal');
       if(modal) {
@@ -590,7 +577,6 @@
       closeModal('loginModal');
     }
 
-    /* 카드 및 리스트 제어 */
     function generateRecipeCards(selectedWorries) {
       const container = document.getElementById('recipeCardList');
       container.innerHTML = '';
@@ -711,11 +697,8 @@
         window.scrollTo(0, 0);
         step = 2;
       } else if (step === 2) {
-        const name = document.getElementById('dogName').value.trim();
-        if(!name) {
-          alert('아이의 이름을 입력해 주세요!');
-          return;
-        }
+        const nameInput = document.getElementById('dogName');
+        const name = nameInput.value.trim() || '아이';
 
         const selectedAge = document.querySelector('input[name="dogAge"]:checked');
         if (!selectedAge) {
