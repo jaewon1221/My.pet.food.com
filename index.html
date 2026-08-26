@@ -19,25 +19,45 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
     
-    html, body { height: 100%; background-color: #f0eee5; color: var(--text-color); overflow: hidden; }
+    /* 스크롤 허용을 위해 html, body 고정 해제 */
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background-color: #f0eee5;
+      color: var(--text-color);
+    }
     
-    /* 앱 메인 레이아웃 (높이 고정 및 세로 배치) */
+    /* 메인 앱 컨테이너 */
     .app-container {
-      width: 100%; max-width: 430px; height: 100vh; background: var(--card-bg);
-      margin: 0 auto; display: flex; flex-direction: column; position: relative;
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background: var(--card-bg);
+      margin: 0 auto;
+      position: relative;
       box-shadow: 0 0 30px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
     }
     
     /* 상단 헤더 고정 */
     .app-header {
-      text-align: center; padding: 18px 0; font-weight: 800; font-size: 1.1rem; color: var(--primary-color);
-      border-bottom: 1px solid #eaeaea; background: #fff; flex-shrink: 0; z-index: 100;
+      text-align: center;
+      padding: 18px 0;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--primary-color);
+      border-bottom: 1px solid #eaeaea;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     
-    /* 콘텐츠 스크롤 영역 (독립 스크롤 활성화) */
+    /* 콘텐츠 영역: 하단 버튼에 가리지 않도록 바닥 여백(padding-bottom)을 160px 부여 */
     .app-content {
-      flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch;
-      padding: 25px 25px 120px 25px; /* 하단 버튼 공간 확보 */
+      flex: 1;
+      padding: 25px 25px 160px 25px;
     }
     
     /* 페이지 제어 */
@@ -88,11 +108,17 @@
       transform: scale(1.01); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
     }
     
-    /* 하단 고정 버튼 */
+    /* 하단 고정 버튼 영역 */
     .btn-area {
-      position: absolute; bottom: 0; left: 0; width: 100%;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
       padding: 15px 25px 25px;
-      background: linear-gradient(to top, rgba(255,255,255,1) 85%, rgba(255,255,255,0)); z-index: 90;
+      background: linear-gradient(to top, rgba(255,255,255,1) 85%, rgba(255,255,255,0));
+      z-index: 90;
     }
     .btn-main {
       width: 100%; padding: 16px; background-color: var(--accent-color); color: #fff;
@@ -134,8 +160,7 @@
       🐾 PERPETUAL FOOD
     </header>
 
-    <!-- 세로 스크롤 가능 구역 -->
-    <div class="app-content" id="scrollContent">
+    <div class="app-content">
       <!-- Page 1: Landing -->
       <div id="page1" class="page active">
         <div class="title-area">
@@ -251,14 +276,12 @@
 
     function handleBtnClick() {
       if (step === 1) {
-        // 2페이지(설문)로 이동
         document.getElementById('page1').classList.remove('active');
         document.getElementById('page2').classList.add('active');
         document.getElementById('mainBtn').innerText = '분석 결과 확인하기';
-        document.getElementById('scrollContent').scrollTop = 0;
+        window.scrollTo(0, 0);
         step = 2;
       } else if (step === 2) {
-        // 이름 유효성 검사
         const name = document.getElementById('dogName').value;
         if(!name) {
           alert('아이의 이름을 입력해 주세요!');
@@ -266,7 +289,6 @@
         }
         document.getElementById('resultName').innerText = name;
 
-        // 로딩 화면 표시
         document.getElementById('page2').classList.remove('active');
         document.getElementById('loadingPage').style.display = 'block';
         document.querySelector('.btn-area').style.display = 'none';
@@ -276,7 +298,7 @@
           document.getElementById('page3').classList.add('active');
           document.querySelector('.btn-area').style.display = 'block';
           document.getElementById('mainBtn').innerText = '정기배송 시작하기';
-          document.getElementById('scrollContent').scrollTop = 0;
+          window.scrollTo(0, 0);
           step = 3;
         }, 1500);
       } else if (step === 3) {
