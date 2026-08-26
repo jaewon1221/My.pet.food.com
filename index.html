@@ -249,6 +249,20 @@
     .sns-login-area { margin-top: 20px; text-align: center; border-top: 1px dashed #E6E0D8; padding-top: 16px; }
     .sns-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px; }
     .btn-sns-kakao { width: 100%; padding: 12px; background: #FEE500; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+
+    /* 결제 수단 모달 스타일 */
+    .pay-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .pay-item { position: relative; }
+    .pay-item input { position: absolute; opacity: 0; }
+    .pay-label {
+      display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+      background: var(--card-bg); border: 1.5px solid #E6E0D8; border-radius: 12px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.95rem;
+    }
+    .pay-item input:checked + .pay-label {
+      border-color: var(--wood-brown); background: var(--wood-brown-light); color: var(--wood-brown);
+    }
+    .pay-icon { font-size: 1.2rem; }
   </style>
 </head>
 <body>
@@ -383,6 +397,49 @@
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기 →
       </button>
+    </div>
+  </div>
+
+  <!-- 결제 수단 선택 모달 -->
+  <div id="paymentModal" class="modal-overlay" onclick="closeModal('paymentModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
+      <div class="modal-header">
+        <div class="modal-icon">💳</div>
+        <div class="modal-title">
+          <h3>결제 수단 선택</h3>
+          <p>원하시는 결제 방식을 선택해 주세요</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="pay-options">
+          <div class="pay-item">
+            <input type="radio" name="payMethod" id="payCard" value="신용/체크카드" checked>
+            <label for="payCard" class="pay-label">
+              <span class="pay-icon">💳</span> 신용/체크카드
+            </label>
+          </div>
+          <div class="pay-item">
+            <input type="radio" name="payMethod" id="payKakao" value="카카오페이">
+            <label for="payKakao" class="pay-label">
+              <span class="pay-icon">💬</span> 카카오페이
+            </label>
+          </div>
+          <div class="pay-item">
+            <input type="radio" name="payMethod" id="payNaver" value="네이버페이">
+            <label for="payNaver" class="pay-label">
+              <span class="pay-icon">🟢</span> 네이버페이
+            </label>
+          </div>
+          <div class="pay-item">
+            <input type="radio" name="payMethod" id="payBank" value="간편 계좌이체">
+            <label for="payBank" class="pay-label">
+              <span class="pay-icon">🏦</span> 간편 계좌이체
+            </label>
+          </div>
+        </div>
+        <button class="btn-select-recipe" style="margin-top:20px;" onclick="processPayment()">선택한 결제 수단으로 결제하기</button>
+      </div>
     </div>
   </div>
 
@@ -687,6 +744,14 @@
       document.getElementById('deliveryDateText').innerText = `${month}월 ${date}일 (${dayName}) 도착 예정`;
     }
 
+    function processPayment() {
+      const selectedPayMethod = document.querySelector('input[name="payMethod"]:checked').value;
+      const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title).join(', ');
+      
+      closeModal('paymentModal');
+      alert(`[${selectedPayMethod} 결제 완료]\n\n선택 식단: ${selectedTitles}\n정기배송 신청이 성공적으로 완료되었습니다!`);
+    }
+
     function handleBtnClick() {
       if (step === 1) {
         document.getElementById('page1').classList.remove('active');
@@ -762,8 +827,11 @@
           return;
         }
 
-        const selectedTitles = Array.from(selectedRecipeKeys).map(k => dataMap[k].title).join(', ');
-        alert(`[${selectedTitles}]\n정기배송 신청이 완료되었습니다!`);
+        /* 결제 수단 선택 모달 오픈 */
+        const modal = document.getElementById('paymentModal');
+        if(modal) {
+          modal.style.setProperty('display', 'flex', 'important');
+        }
       }
     }
   </script>
