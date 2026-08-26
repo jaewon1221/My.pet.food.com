@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>우리아이 맞춤식단 | 퍼스널 푸드 매칭</title>
   
-  <!-- 프리텐다드 폰트 적용 (더 세련된 글꼴) -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   
   <style>
     :root {
-      --primary-color: #2d4a22; /* 짙은 그린 */
-      --secondary-color: #fdfbf7; /* 부드러운 베이지 배경 */
-      --accent-color: #3b2314; /* 초콜릿 브라운 */
+      --primary-color: #2d4a22;
+      --secondary-color: #fdfbf7;
+      --accent-color: #3b2314;
       --text-color: #1f3317;
       --card-bg: #ffffff;
     }
@@ -21,22 +20,18 @@
     
     body { background-color: #f0eee5; color: var(--text-color); display: flex; justify-content: center; overflow-x: hidden; }
     
-    /* 메인 컨테이너 (앱 스타일 fixed) */
     .app-container {
       width: 100%; max-width: 430px; background: var(--card-bg); min-height: 100vh; position: relative;
       display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.08); overflow: hidden;
     }
     
-    /* 상단 헤더 */
     .app-header {
       text-align: center; padding: 18px 0; font-weight: 800; font-size: 1.1rem; color: var(--primary-color);
       border-bottom: 1px solid #eaeaea; background: #fff; position: sticky; top: 0; z-index: 100;
     }
     
-    /* 콘텐츠 영역 */
     .app-content { flex: 1; padding: 25px; position: relative; padding-bottom: 100px; }
     
-    /* 페이지 기본 숨김 및 전환 애니메이션 */
     .page {
       display: none; opacity: 0; transform: translateY(15px);
       transition: opacity 0.4s ease, transform 0.4s ease;
@@ -44,13 +39,11 @@
     }
     .page.active { display: block; opacity: 1; transform: translateY(0); position: relative; top: 0; left: 0; width: 100%; }
     
-    /* 타이틀 요소 스타일 */
     .title-area { text-align: center; margin-bottom: 30px; }
     .main-title { font-size: 1.7rem; font-weight: 800; line-height: 1.3; color: #000; margin-bottom: 10px; word-break: keep-all; }
     .highlight { color: var(--primary-color); }
     .sub-title { color: #666; font-size: 1rem; font-weight: 400; line-height: 1.5; }
     
-    /* 메인 랜딩 일러스트 영역 */
     .hero-graphic {
       text-align: center; margin: 50px 0; position: relative; animation: floating 3s ease-in-out infinite;
     }
@@ -60,7 +53,6 @@
       100% { transform: translatey(0px); }
     }
     
-    /* 설문 폼 스타일 업그레이드 */
     .form-section { margin-bottom: 25px; }
     .q-label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 12px; color: var(--text-color); }
     .input-style {
@@ -69,7 +61,6 @@
     }
     .input-style:focus { border-color: var(--primary-color); outline: none; background: #fff; }
     
-    /* 맞춤형 체크박스/라디오 버튼 */
     .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
@@ -83,7 +74,6 @@
       transform: scale(1.02); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
     }
     
-    /* 하단 고정 버튼 세련되게 */
     .btn-area {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 430px; padding: 20px 25px 30px;
@@ -97,23 +87,24 @@
     }
     .btn-main:active { transform: translateY(2px) scale(0.98); box-shadow: 0 4px 10px rgba(59,35,20,0.2); }
     
-    /* 결과 카드 스타일 업그레이드 */
+    /* 결과 카드 클릭 가능하도록 스타일 적용 */
     .result-card {
       background: #fff; border-radius: 20px; padding: 20px; margin-bottom: 15px;
       display: flex; align-items: center; gap: 15px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: transform 0.2s;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: all 0.2s; cursor: pointer;
     }
-    .result-card:active { transform: scale(0.98); }
+    .result-card:active { transform: scale(0.98); background: #fdfdfd; }
     .card-icon { font-size: 2.2rem; background: #f8f6f0; padding: 12px; border-radius: 15px; }
     .card-info { flex: 1; }
     .card-info h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .card-info p { font-size: 0.9rem; color: #777; }
+    .card-info p { font-size: 0.85rem; color: #777; }
+    .recipe-btn-hint { font-size: 0.75rem; color: var(--primary-color); font-weight: 700; margin-top: 4px; display: inline-block; }
     .match-tag {
       background: #eef5eb; color: var(--primary-color); padding: 6px 10px;
       border-radius: 8px; font-size: 0.8rem; font-weight: 700; white-space: nowrap;
     }
     
-    /* 로딩 상태 */
+    /* 로딩 스타일 */
     #loadingPage { display: none; text-align: center; padding-top: 100px; }
     .spinner {
       border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
@@ -121,6 +112,26 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* 팝업(모달) 스타일 추가 */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: flex-end;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: #fff; width: 100%; max-width: 430px; border-radius: 25px 25px 0 0;
+      padding: 30px 25px; animation: slideUp 0.3s ease-out; max-height: 80vh; overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { font-size: 1.3rem; font-weight: 800; color: #000; }
+    .close-btn { background: none; border: none; font-size: 1.5rem; font-weight: 700; cursor: pointer; color: #999; }
+    .recipe-detail-item { margin-bottom: 18px; }
+    .recipe-detail-item h5 { font-size: 0.95rem; font-weight: 700; color: var(--primary-color); margin-bottom: 6px; }
+    .recipe-detail-item p { font-size: 0.9rem; color: #555; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -213,23 +224,26 @@
       <div id="page3" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>매칭 레시피입니다</h1>
-          <p class="sub-title">가장 높은 매칭률을 보이는 퍼스널 푸드입니다.</p>
+          <p class="sub-title">카드를 터치하면 상세 레시피를 보실 수 있습니다.</p>
         </div>
 
-        <div class="result-card">
+        <!-- 카드 클릭 시 팝업 실행 -->
+        <div class="result-card" onclick="openRecipe('salmon')">
           <div class="card-icon">🐟</div>
           <div class="card-info">
             <h4>프리미엄 연어 레시피</h4>
             <p>피부 건강 & 눈물 개선 전용</p>
+            <span class="recipe-btn-hint">🔍 자세히 보기</span>
           </div>
           <div class="match-tag">98% Match</div>
         </div>
 
-        <div class="result-card">
+        <div class="result-card" onclick="openRecipe('duck')">
           <div class="card-icon">🦆</div>
           <div class="card-info">
             <h4>센시티브 오리 레시피</h4>
             <p>소화 유산균 & 영양 설계</p>
+            <span class="recipe-btn-hint">🔍 자세히 보기</span>
           </div>
           <div class="match-tag">92% Match</div>
         </div>
@@ -251,311 +265,47 @@
     </div>
   </div>
 
-  <script>
-    // 페이지 전환 함수 (애니메이션 효과 포함)
-    function nextPage(pageNum) {
-      const currentPage = document.querySelector('.page.active');
-      const targetPage = document.getElementById('page' + pageNum);
-      
-      if(currentPage) {
-        currentPage.classList.remove('active');
-        // 애니메이션 대기 시간
-        setTimeout(() => {
-          targetPage.classList.add('active');
-          window.scrollTo(0, 0);
-        }, 100); 
-      } else {
-        targetPage.classList.add('active');
-      }
-    }
-
-    // 로딩 화면 보여주기
-    function showLoading() {
-      // 이름 입력 확인
-      const name = document.getElementById('dogName').value;
-      if(!name) {
-        alert('아이의 이름을 입력해 주세요!');
-        return;
-      }
-      
-      // 결과 페이지에 이름 적용
-      document.getElementById('resultName').innerText = name;
-      
-      // 현재 페이지 숨기고 로딩 표시
-      document.querySelector('.page.active').classList.remove('active');
-      document.getElementById('loadingPage').style.display = 'block';
-      
-      // 2초 뒤 결과 페이지로 이동
-      setTimeout(() => {
-        document.getElementById('loadingPage').style.display = 'none';
-        nextPage(3);
-      }, 2000);
-    }
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>우리아이 맞춤식단 | 퍼스널 푸드 매칭</title>
-  
-  <!-- 프리텐다드 폰트 적용 (더 세련된 글꼴) -->
-  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-  
-  <style>
-    :root {
-      --primary-color: #2d4a22; /* 짙은 그린 */
-      --secondary-color: #fdfbf7; /* 부드러운 베이지 배경 */
-      --accent-color: #3b2314; /* 초콜릿 브라운 */
-      --text-color: #1f3317;
-      --card-bg: #ffffff;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-    
-    body { background-color: #f0eee5; color: var(--text-color); display: flex; justify-content: center; overflow-x: hidden; }
-    
-    /* 메인 컨테이너 (앱 스타일 fixed) */
-    .app-container {
-      width: 100%; max-width: 430px; background: var(--card-bg); min-height: 100vh; position: relative;
-      display: flex; flex-direction: column; box-shadow: 0 0 30px rgba(0,0,0,0.08); overflow: hidden;
-    }
-    
-    /* 상단 헤더 */
-    .app-header {
-      text-align: center; padding: 18px 0; font-weight: 800; font-size: 1.1rem; color: var(--primary-color);
-      border-bottom: 1px solid #eaeaea; background: #fff; position: sticky; top: 0; z-index: 100;
-    }
-    
-    /* 콘텐츠 영역 */
-    .app-content { flex: 1; padding: 25px; position: relative; padding-bottom: 100px; }
-    
-    /* 페이지 기본 숨김 및 전환 애니메이션 */
-    .page {
-      display: none; opacity: 0; transform: translateY(15px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      position: absolute; width: calc(100% - 50px); top: 25px; left: 25px;
-    }
-    .page.active { display: block; opacity: 1; transform: translateY(0); position: relative; top: 0; left: 0; width: 100%; }
-    
-    /* 타이틀 요소 스타일 */
-    .title-area { text-align: center; margin-bottom: 30px; }
-    .main-title { font-size: 1.7rem; font-weight: 800; line-height: 1.3; color: #000; margin-bottom: 10px; word-break: keep-all; }
-    .highlight { color: var(--primary-color); }
-    .sub-title { color: #666; font-size: 1rem; font-weight: 400; line-height: 1.5; }
-    
-    /* 메인 랜딩 일러스트 영역 */
-    .hero-graphic {
-      text-align: center; margin: 50px 0; position: relative; animation: floating 3s ease-in-out infinite;
-    }
-    @keyframes floating {
-      0% { transform: translatey(0px); }
-      50% { transform: translatey(-15px); }
-      100% { transform: translatey(0px); }
-    }
-    
-    /* 설문 폼 스타일 업그레이드 */
-    .form-section { margin-bottom: 25px; }
-    .q-label { display: block; font-weight: 700; font-size: 1.05rem; margin-bottom: 12px; color: var(--text-color); }
-    .input-style {
-      width: 100%; padding: 16px; border: 2px solid #eaeaea; border-radius: 14px;
-      font-size: 1.05rem; transition: border-color 0.2s; background: #fdfdfd;
-    }
-    .input-style:focus { border-color: var(--primary-color); outline: none; background: #fff; }
-    
-    /* 맞춤형 체크박스/라디오 버튼 */
-    .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .choice-item { position: relative; }
-    .choice-item input { position: absolute; opacity: 0; }
-    .choice-label {
-      display: block; padding: 16px; background: #fff; border: 2px solid #eaeaea;
-      border-radius: 14px; text-align: center; font-weight: 600; cursor: pointer;
-      transition: all 0.2s ease; color: #555;
-    }
-    .choice-item input:checked + .choice-label {
-      background: #eef5eb; border-color: var(--primary-color); color: var(--primary-color);
-      transform: scale(1.02); box-shadow: 0 4px 12px rgba(45,74,34,0.1);
-    }
-    
-    /* 하단 고정 버튼 세련되게 */
-    .btn-area {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 430px; padding: 20px 25px 30px;
-      background: linear-gradient(to top, rgba(255,255,255,1) 80%, rgba(255,255,255,0)); z-index: 90;
-    }
-    .btn-main {
-      width: 100%; padding: 18px; background-color: var(--accent-color); color: #fff;
-      border: none; border-radius: 16px; font-size: 1.15rem; font-weight: 700;
-      cursor: pointer; transition: all 0.2s ease;
-      box-shadow: 0 8px 20px rgba(59,35,20,0.25); display: flex; justify-content: center; align-items:center; gap: 8px;
-    }
-    .btn-main:active { transform: translateY(2px) scale(0.98); box-shadow: 0 4px 10px rgba(59,35,20,0.2); }
-    
-    /* 결과 카드 스타일 업그레이드 */
-    .result-card {
-      background: #fff; border-radius: 20px; padding: 20px; margin-bottom: 15px;
-      display: flex; align-items: center; gap: 15px; border: 1px solid #f0f0f0;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.04); transition: transform 0.2s;
-    }
-    .result-card:active { transform: scale(0.98); }
-    .card-icon { font-size: 2.2rem; background: #f8f6f0; padding: 12px; border-radius: 15px; }
-    .card-info { flex: 1; }
-    .card-info h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-    .card-info p { font-size: 0.9rem; color: #777; }
-    .match-tag {
-      background: #eef5eb; color: var(--primary-color); padding: 6px 10px;
-      border-radius: 8px; font-size: 0.8rem; font-weight: 700; white-space: nowrap;
-    }
-    
-    /* 로딩 상태 */
-    #loadingPage { display: none; text-align: center; padding-top: 100px; }
-    .spinner {
-      border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color);
-      border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    <header class="app-header">
-      🐾 PERPETUAL FOOD
-    </header>
-
-    <div class="app-content">
-      <!-- Page 1: Landing -->
-      <div id="page1" class="page active">
-        <div class="title-area">
-          <h1 class="main-title">좋은 거 먹이고 싶은데<br><span class="highlight">어디서 알아보지?</span></h1>
-          <p class="sub-title">깐깐한 분석으로 우리 아이에게<br>딱 맞는 1:1 맞춤 식단을 매칭해 드립니다.</p>
-        </div>
-        <div class="hero-graphic">
-          <img src="https://img.icons8.com/emoji/96/dog-face.png" alt="dog" style="width:100px; height:100px;">
-          <img src="https://img.icons8.com/emoji/96/bowl-with-food.png" alt="bowl" style="width:70px; height:70px; position:absolute; bottom:-10px; right:100px;">
-        </div>
-        <div class="btn-area">
-          <button class="btn-main" onclick="nextPage(2)">
-            나만의 맞춤 식단 매칭하기
-            <img src="https://img.icons8.com/ios-glyphs/24/ffffff/long-arrow-right.png"/>
-          </button>
-        </div>
+  <!-- 레시피 상세 모달 팝업 -->
+  <div id="recipeModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle" class="modal-title">레시피 상세</h3>
+        <button class="close-btn" onclick="closeRecipe()">✕</button>
       </div>
-
-      <!-- Page 2: Survey -->
-      <div id="page2" class="page">
-        <div class="title-area">
-          <h1 class="main-title" style="font-size:1.4rem;">아이의 정보를 입력해 주세요</h1>
-        </div>
-        
-        <div class="form-section">
-          <label class="q-label" for="dogName">1. 아이의 이름은 무엇인가요?</label>
-          <input type="text" id="dogName" class="input-style" placeholder="예: 콩이">
-        </div>
-
-        <div class="form-section">
-          <label class="q-label">2. 아이의 나이는 어떻게 되나요?</label>
-          <div class="choice-group">
-            <div class="choice-item">
-              <input type="radio" name="dogAge" id="age1" value="퍼피" checked>
-              <label for="age1" class="choice-label">1세 미만</label>
-            </div>
-            <div class="choice-item">
-              <input type="radio" name="dogAge" id="age2" value="성견">
-              <label for="age2" class="choice-label">1세 ~ 7세</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <label class="q-label">3. 걱정되는 건강 고민이 있나요? (중복 가능)</label>
-          <div class="choice-group">
-            <div class="choice-item">
-              <input type="checkbox" name="worry" id="worry1" value="피부">
-              <label for="worry1" class="choice-label">피부/피모</label>
-            </div>
-            <div class="choice-item">
-              <input type="checkbox" name="worry" id="worry2" value="소화">
-              <label for="worry2" class="choice-label">소화불량</label>
-            </div>
-            <div class="choice-item">
-              <input type="checkbox" name="worry" id="worry3" value="관절">
-              <label for="worry3" class="choice-label">관절 건강</label>
-            </div>
-            <div class="choice-item">
-              <input type="checkbox" name="worry" id="worry4" value="눈물">
-              <label for="worry4" class="choice-label">눈물자국</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="btn-area">
-          <button class="btn-main" onclick="showLoading()">
-            분석 결과 확인하기
-          </button>
-        </div>
+      <div id="modalBody">
+        <!-- 동적으로 상세 내용 들어가는 공간 -->
       </div>
-      
-      <!-- Loading State -->
-      <div id="loadingPage">
-        <div class="spinner"></div>
-        <p style="font-weight:700; font-size:1.1rem;">우리 아이 데이터를<br>정밀 분석 중입니다...</p>
-      </div>
-
-      <!-- Page 3: Result -->
-      <div id="page3" class="page">
-        <div class="title-area">
-          <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">콩이</span>를 위한<br>매칭 레시피입니다</h1>
-          <p class="sub-title">가장 높은 매칭률을 보이는 퍼스널 푸드입니다.</p>
-        </div>
-
-        <div class="result-card">
-          <div class="card-icon">🐟</div>
-          <div class="card-info">
-            <h4>프리미엄 연어 레시피</h4>
-            <p>피부 건강 & 눈물 개선 전용</p>
-          </div>
-          <div class="match-tag">98% Match</div>
-        </div>
-
-        <div class="result-card">
-          <div class="card-icon">🦆</div>
-          <div class="card-info">
-            <h4>센시티브 오리 레시피</h4>
-            <p>소화 유산균 & 영양 설계</p>
-          </div>
-          <div class="match-tag">92% Match</div>
-        </div>
-        
-        <div class="form-section" style="margin-top:30px;">
-          <label class="q-label">배송 주기 설정</label>
-          <select class="input-style">
-            <option>2주에 한 번 (가장 인기)</option>
-            <option>4주에 한 번</option>
-          </select>
-        </div>
-
-        <div class="btn-area">
-          <button class="btn-main" onclick="alert('정기배송 신청이 완료되었습니다!')">
-            정기배송 시작하기
-          </button>
-        </div>
-      </div>
+      <button class="btn-main" style="margin-top:20px; position:static;" onclick="closeRecipe()">
+        확인 완료
+      </button>
     </div>
   </div>
 
   <script>
-    // 페이지 전환 함수 (애니메이션 효과 포함)
+    // 레시피 정보 데이터
+    const recipeData = {
+      salmon: {
+        title: "🐟 프리미엄 연어 레시피",
+        ingredients: "신선한 생연어 60%, 당근, 단호박, 블루베리, 오메가3 오일",
+        nutrition: "단백질 28% 이상, 지방 14% 이상, 조섬유 3% 이하",
+        benefit: "오메가3 오일과 생연어가 알레르기를 줄여주고 피모 윤기 개선 및 눈물 자국에 탁월합니다.",
+        guide: "하루 2회, 아이 체중에 맞게 나누어 급여해 주세요."
+      },
+      duck: {
+        title: "🦆 센시티브 오리 레시피",
+        ingredients: "국내산 오리고기 55%, 고구마, 양배추, 유산균 복합체, 피시콜라겐",
+        nutrition: "단백질 26% 이상, 지방 12% 이상, 조섬유 4% 이하",
+        benefit: "소화율이 높은 오리고기와 프로바이오틱스가 함유되어 묽은 변이나 장이 예민한 아이에게 적합합니다.",
+        guide: "기존 사료와 3일간 섞어 급여하면서 양을 천천히 늘려주세요."
+      }
+    };
+
     function nextPage(pageNum) {
       const currentPage = document.querySelector('.page.active');
       const targetPage = document.getElementById('page' + pageNum);
       
       if(currentPage) {
         currentPage.classList.remove('active');
-        // 애니메이션 대기 시간
         setTimeout(() => {
           targetPage.classList.add('active');
           window.scrollTo(0, 0);
@@ -565,27 +315,54 @@
       }
     }
 
-    // 로딩 화면 보여주기
     function showLoading() {
-      // 이름 입력 확인
       const name = document.getElementById('dogName').value;
       if(!name) {
         alert('아이의 이름을 입력해 주세요!');
         return;
       }
       
-      // 결과 페이지에 이름 적용
       document.getElementById('resultName').innerText = name;
-      
-      // 현재 페이지 숨기고 로딩 표시
       document.querySelector('.page.active').classList.remove('active');
       document.getElementById('loadingPage').style.display = 'block';
       
-      // 2초 뒤 결과 페이지로 이동
       setTimeout(() => {
         document.getElementById('loadingPage').style.display = 'none';
         nextPage(3);
       }, 2000);
+    }
+
+    // 레시피 팝업 열기 함수
+    function openRecipe(type) {
+      const data = recipeData[type];
+      if(!data) return;
+
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalBody').innerHTML = `
+        <div class="recipe-detail-item">
+          <h5>🌿 주원료</h5>
+          <p>${data.ingredients}</p>
+        </div>
+        <div class="recipe-detail-item">
+          <h5>📊 영양 성분</h5>
+          <p>${data.nutrition}</p>
+        </div>
+        <div class="recipe-detail-item">
+          <h5>✨ 맞춤 추천 이유</h5>
+          <p>${data.benefit}</p>
+        </div>
+        <div class="recipe-detail-item">
+          <h5>🥣 급여 방법</h5>
+          <p>${data.guide}</p>
+        </div>
+      `;
+
+      document.getElementById('recipeModal').classList.add('active');
+    }
+
+    // 레시피 팝업 닫기 함수
+    function closeRecipe() {
+      document.getElementById('recipeModal').classList.remove('active');
     }
   </script>
 </body>
