@@ -14,14 +14,13 @@
   
   <style>
     :root {
-      /* 아이보리 배경 & 우드브라운 버튼 테마 */
-      --bg-color: #FDFBF7;          /* 전체 아이보리 배경 */
-      --card-bg: #FFFFFF;           /* 카드 및 모달 흰색 배경 */
-      --wood-brown: #6E472B;        /* 메인 우드브라운 */
-      --wood-brown-hover: #54351F;  /* 버튼 클릭시 어두운 브라운 */
-      --wood-brown-light: #F7F1EB;  /* 연한 브라운 (선택 배경용) */
-      --text-main: #2A2421;         /* 텍스트 컬러 */
-      --text-sub: #766B65;          /* 서브 텍스트 */
+      --bg-color: #FDFBF7;
+      --card-bg: #FFFFFF;
+      --wood-brown: #6E472B;
+      --wood-brown-hover: #54351F;
+      --wood-brown-light: #F7F1EB;
+      --text-main: #2A2421;
+      --text-sub: #766B65;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -45,7 +44,6 @@
       flex-direction: column;
     }
     
-    /* 상단 헤더 */
     .app-header {
       display: flex !important;
       justify-content: space-between !important;
@@ -117,19 +115,19 @@
     .input-style:focus { border-color: var(--wood-brown); outline: none; }
     
     .choice-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .choice-group.age-group { grid-template-columns: repeat(3, 1fr); } /* 나이 선택 3열 배치 */
     .choice-item { position: relative; }
     .choice-item input { position: absolute; opacity: 0; }
     .choice-label {
-      display: block; padding: 15px 10px; background: var(--card-bg); border: 1.5px solid #E6E0D8;
+      display: block; padding: 15px 5px; background: var(--card-bg); border: 1.5px solid #E6E0D8;
       border-radius: 14px; text-align: center; font-weight: 600; cursor: pointer;
-      transition: all 0.2s ease; color: var(--text-sub); font-size: 0.95rem;
+      transition: all 0.2s ease; color: var(--text-sub); font-size: 0.9rem;
     }
     .choice-item input:checked + .choice-label {
       background: var(--wood-brown-light); border-color: var(--wood-brown); color: var(--wood-brown);
       transform: scale(1.01); box-shadow: 0 4px 12px rgba(110,71,43,0.1);
     }
     
-    /* 하단 고정 우드브라운 버튼 */
     .btn-area {
       position: fixed;
       bottom: 0;
@@ -149,7 +147,6 @@
     }
     .btn-main:active { background-color: var(--wood-brown-hover); transform: translateY(2px) scale(0.98); }
     
-    /* 레시피 카드 */
     .result-card {
       background: var(--card-bg); border-radius: 20px; padding: 16px; margin-bottom: 12px;
       display: flex; align-items: center; gap: 12px; border: 1.5px solid #EFEAE4;
@@ -198,7 +195,6 @@
     .delivery-text h5 { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--wood-brown); font-weight: 800; margin-top: 2px; }
 
-    /* 모달 오버레이 */
     .modal-overlay {
       display: none;
       position: fixed !important;
@@ -238,7 +234,6 @@
       width: 100%; margin-top: 18px; padding: 12px; background: var(--wood-brown); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
     }
 
-    /* 로그인 모달 */
     .login-tabs { display: flex; border-bottom: 2px solid #EFEAE4; margin-bottom: 20px; margin-top: 10px; }
     .login-tab { flex: 1; text-align: center; padding: 10px; font-weight: 700; color: #bbb; cursor: pointer; }
     .login-tab.active { color: var(--wood-brown); border-bottom: 2px solid var(--wood-brown); margin-bottom: -2px; }
@@ -250,7 +245,6 @@
     .sns-title { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px; }
     .btn-sns-kakao { width: 100%; padding: 12px; background: #FEE500; color: #000; border: none; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
 
-    /* 결제 수단 모달 스타일 */
     .pay-options { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
     .pay-item { position: relative; }
     .pay-item input { position: absolute; opacity: 0; }
@@ -264,7 +258,6 @@
     }
     .pay-icon { font-size: 1.2rem; }
 
-    /* 마이페이지 모달 버튼 스타일 */
     .mypage-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
     .mypage-btn {
       width: 100%; padding: 14px; border: 1.5px solid #E6E0D8; background: var(--card-bg);
@@ -311,7 +304,7 @@
 
         <div class="form-section">
           <label class="q-label">2. 아이의 나이는 어떻게 되나요? (필수 선택)</label>
-          <div class="choice-group">
+          <div class="choice-group age-group">
             <div class="choice-item">
               <input type="radio" name="dogAge" id="age1" value="퍼피">
               <label for="age1" class="choice-label">1세 미만</label>
@@ -319,6 +312,10 @@
             <div class="choice-item">
               <input type="radio" name="dogAge" id="age2" value="성견">
               <label for="age2" class="choice-label">1세 ~ 7세</label>
+            </div>
+            <div class="choice-item">
+              <input type="radio" name="dogAge" id="age3" value="시니어">
+              <label for="age3" class="choice-label">7세 이상</label>
             </div>
           </div>
         </div>
