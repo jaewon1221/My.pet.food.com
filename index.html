@@ -623,7 +623,7 @@
         ing: '알래스카 생연어, 고구마, 블루베리',
         protein: '28.0% 이상',
         fat: '14.0% 이상',
-        cal: '365 kcal/100g',
+        cal: '3,650 kcal/kg',
         targets: ['피부', '눈물'],
         baseScore: 72
       },
@@ -636,7 +636,7 @@
         ing: '국내산 오리가슴살, 단호박, 유산균',
         protein: '26.0% 이상',
         fat: '12.0% 이상',
-        cal: '350 kcal/100g',
+        cal: '3,500 kcal/kg',
         targets: ['소화'],
         baseScore: 70
       },
@@ -649,7 +649,7 @@
         ing: '호주산 소홍두깨살, 브로콜리, 당근',
         protein: '30.0% 이상',
         fat: '15.0% 이상',
-        cal: '380 kcal/100g',
+        cal: '3,800 kcal/kg',
         targets: ['관절'],
         baseScore: 68
       },
@@ -662,7 +662,7 @@
         ing: '국내산 닭가슴살, 양배추, 사과',
         protein: '32.0% 이상',
         fat: '8.0% 이하',
-        cal: '330 kcal/100g',
+        cal: '3,300 kcal/kg',
         targets: ['관절', '소화'],
         baseScore: 65
       }
@@ -943,6 +943,14 @@
 
     function handleBtnClick() {
       if (step === 1) {
+        // 💡 [추가된 로직] 첫 화면에서 로그인 여부 검사
+        if (!isLoggedIn) {
+          alert('서비스를 이용하시려면 로그인이 필요합니다!');
+          const modal = document.getElementById('loginModal');
+          if (modal) modal.style.setProperty('display', 'flex', 'important');
+          return;
+        }
+
         pageHistory.push(step);
         document.getElementById('page1').classList.remove('active');
         document.getElementById('page2').classList.add('active');
@@ -992,7 +1000,6 @@
           return;
         }
         
-        // 💡 [추가된 유효성 검사] 첫 배송 시작일(달력)이 선택되었는지 확인
         const dateInputVal = document.getElementById('shipStartDate').value;
         if (!dateInputVal) {
           alert('첫 배송 시작일을 선택해 주세요!');
