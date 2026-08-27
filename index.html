@@ -530,7 +530,7 @@
         </div>
       </div>
 
-      <!-- Page 5 (신규 추가: 주문 완료 및 배송 과정 트래킹) -->
+      <!-- Page 5 -->
       <div id="page5" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">🎉 주문이 완료되었습니다!</h1>
@@ -819,7 +819,6 @@
 
     function updateHeaderBackBtn() {
       const backBtn = document.getElementById('backBtn');
-      // 5단계(배송 트래킹 완료 화면)에서는 뒤로가기 숨김 처리
       if (step > 1 && step < 5) {
         backBtn.style.display = 'inline-block';
       } else {
@@ -1055,11 +1054,10 @@
     function processPayment() {
       closeModal('paymentModal');
 
-      // 결제 완료 후 5단계(배송 트래킹 화면)로 진입
       pageHistory.push(step);
       document.getElementById('page4').classList.remove('active');
       document.getElementById('page5').classList.add('active');
-      document.querySelector('.btn-area').style.display = 'none'; // 마지막 완료 화면에서는 하단 버튼 숨김
+      document.querySelector('.btn-area').style.display = 'none';
       step = 5;
       updateHeaderBackBtn();
       window.scrollTo(0, 0);
@@ -1069,13 +1067,7 @@
 
     function handleBtnClick() {
       if (step === 1) {
-        if (!isLoggedIn) {
-          alert('서비스를 이용하시려면 로그인이 필요합니다!');
-          const modal = document.getElementById('loginModal');
-          if (modal) modal.style.setProperty('display', 'flex', 'important');
-          return;
-        }
-
+        // 로그인 체크 로직 제거됨: 바로 다음 단계로 진행
         pageHistory.push(step);
         document.getElementById('page1').classList.remove('active');
         document.getElementById('page2').classList.add('active');
