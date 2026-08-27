@@ -383,6 +383,7 @@
     </header>
 
     <div class="app-content">
+      <!-- Page 1 -->
       <div id="page1" class="page active">
         <div class="title-area">
           <h1 class="main-title">좋은 거 먹이고 싶은데<br><span class="highlight">어디서 알아보지?</span></h1>
@@ -394,6 +395,7 @@
         </div>
       </div>
 
+      <!-- Page 2 -->
       <div id="page2" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">아이의 정보를 입력해 주세요</h1>
@@ -467,11 +469,13 @@
         </div>
       </div>
       
+      <!-- Loading -->
       <div id="loadingPage">
         <div class="spinner"></div>
         <p style="font-weight:700; font-size:1.1rem;">우리 아이 데이터를<br>정밀 분석 중입니다...</p>
       </div>
 
+      <!-- Page 3 -->
       <div id="page3" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.5rem;"><span id="resultName" class="highlight">아이</span>를 위한<br>맞춤 레시피입니다</h1>
@@ -495,6 +499,7 @@
         </div>
       </div>
 
+      <!-- Page 4 -->
       <div id="page4" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">배송지 정보를 입력해 주세요</h1>
@@ -526,6 +531,7 @@
         </div>
       </div>
 
+      <!-- Page 5 -->
       <div id="page5" class="page">
         <div class="title-area">
           <h1 class="main-title" style="font-size:1.4rem;">🎉 주문이 완료되었습니다!</h1>
@@ -579,6 +585,7 @@
 
     </div>
 
+    <!-- 하단 고정 우드브라운 버튼 -->
     <div class="btn-area">
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기 →
@@ -586,6 +593,7 @@
     </div>
   </div>
 
+  <!-- 마이페이지 모달 -->
   <div id="myPageModal" class="modal-overlay" onclick="closeModal('myPageModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal('myPageModal')">✕</button>
@@ -615,6 +623,7 @@
     </div>
   </div>
 
+  <!-- 결제 수단 선택 모달 -->
   <div id="paymentModal" class="modal-overlay" onclick="closeModal('paymentModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal('paymentModal')">✕</button>
@@ -665,6 +674,7 @@
     </div>
   </div>
 
+  <!-- 레시피 상세 모달 -->
   <div id="recipeModal" class="modal-overlay" onclick="closeModal('recipeModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal('recipeModal')">✕</button>
@@ -688,6 +698,7 @@
     </div>
   </div>
 
+  <!-- 로그인 모달 -->
   <div id="loginModal" class="modal-overlay" onclick="closeModal('loginModal')">
     <div class="modal-content" onclick="event.stopPropagation()">
       <button class="modal-close" onclick="closeModal('loginModal')">✕</button>
@@ -734,6 +745,9 @@
     let activeModalKey = null;
     let isLoggedIn = false;
     let hasCoupon = false;
+
+    // [추가됨] 회원가입 정보를 저장할 변수 (메모리 DB 역할)
+    let registeredUser = null;
 
     const dataMap = {
       salmon: {
@@ -888,6 +902,7 @@
       }
     }
 
+    // [수정됨] 회원가입 정보 검증 및 로그인 처리 로직
     function handleLogin() {
       const email = document.getElementById('loginEmail').value.trim();
       const pw = document.getElementById('loginPw').value.trim();
@@ -897,12 +912,26 @@
         return;
       }
 
+      // 회원가입된 정보가 아예 없는 경우
+      if (!registeredUser) {
+        alert('등록된 회원 정보가 없습니다. 먼저 회원가입을 진행해 주세요!');
+        switchLoginTab('signup');
+        return;
+      }
+
+      // 입력한 정보가 가입된 정보와 일치하는지 확인
+      if (registeredUser.email !== email || registeredUser.pw !== pw) {
+        alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+        return;
+      }
+
       isLoggedIn = true;
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
-      alert('성공적으로 로그인되었습니다!');
+      alert(`환영합니다, ${registeredUser.name}님! 성공적으로 로그인되었습니다.`);
       closeModal('loginModal');
     }
 
+    // [수정됨] 회원가입 시 정보 저장 로직
     function handleSignup() {
       const name = document.getElementById('signupName').value.trim();
       const email = document.getElementById('signupEmail').value.trim();
@@ -913,16 +942,21 @@
         return;
       }
 
+      // 회원 정보 저장
+      registeredUser = { name, email, pw };
+
       isLoggedIn = true;
       hasCoupon = true;
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
-      alert('🎉 회원가입이 완료되었습니다!\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.');
+      alert('🎉 회원가입 및 정보 저장이 완료되었습니다!\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.');
       closeModal('loginModal');
     }
 
     function handleSnsLogin(provider) {
       isLoggedIn = true;
       hasCoupon = true;
+      // 소셜 로그인 시에도 가상 정보 저장
+      registeredUser = { name: `${provider}회원`, email: `social@${provider.toLowerCase()}.com`, pw: 'social123' };
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
       alert(`🎉 ${provider} 계정으로 로그인 되었습니다.\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.`);
       closeModal('loginModal');
@@ -1057,7 +1091,6 @@
 
     function handleBtnClick() {
       if (step === 1) {
-        // [복구됨] 로그인 체크 로직
         if (!isLoggedIn) {
           alert('맞춤 식단 매칭을 이용하려면 로그인이 필요합니다!');
           const modal = document.getElementById('loginModal');
@@ -1120,7 +1153,6 @@
           return;
         }
         
-        // [추가됨] 배송 주기 선택 여부 확인
         const shipCycleVal = document.getElementById('shipCycle').value;
         if (!shipCycleVal) {
           alert('배송 주기를 선택해 주세요!');
