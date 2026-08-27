@@ -44,7 +44,6 @@
       flex-direction: column;
     }
     
-    /* 상단 헤더 */
     .app-header {
       display: flex !important;
       justify-content: space-between !important;
@@ -72,7 +71,7 @@
       font-size: 1.3rem;
       color: var(--wood-brown);
       cursor: pointer;
-      display: none; /* 기본 숨김 */
+      display: none;
       padding: 0 4px;
     }
     
@@ -213,7 +212,6 @@
     .delivery-text h5 { font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
     .delivery-text p { font-size: 1.1rem; color: var(--wood-brown); font-weight: 800; margin-top: 2px; }
 
-    /* 배송 트래킹 타임라인 스타일 */
     .tracking-container {
       background: var(--card-bg);
       border: 1.5px solid #EFEAE4;
@@ -585,7 +583,7 @@
 
     </div>
 
-    <!-- 하단 고정 우드브라운 버튼 -->
+    <!-- 하단 고정 버튼 -->
     <div class="btn-area">
       <button id="mainBtn" class="btn-main" onclick="handleBtnClick()">
         나만의 맞춤 식단 매칭하기 →
@@ -637,7 +635,8 @@
       <div class="modal-body">
         <div class="coupon-box">
           <label class="coupon-label" for="useCoupon">
-            <input type="checkbox" id="useCoupon" style="width:18px; height:18px; accent-color:var(--wood-brown);">
+            <!-- [수정됨] 쿠폰 체크박스 클릭 시 로그인 상태 및 쿠폰 소유 여부 검증 함수 실행 -->
+            <input type="checkbox" id="useCoupon" onclick="checkCouponValidation(event)" style="width:18px; height:18px; accent-color:var(--wood-brown);">
             <span>회원가입 10% 할인 쿠폰 적용</span>
           </label>
           <span class="coupon-badge">10% OFF</span>
@@ -745,8 +744,6 @@
     let activeModalKey = null;
     let isLoggedIn = false;
     let hasCoupon = false;
-
-    // [추가됨] 회원가입 정보를 저장할 변수 (메모리 DB 역할)
     let registeredUser = null;
 
     const dataMap = {
@@ -902,7 +899,6 @@
       }
     }
 
-    // [수정됨] 회원가입 정보 검증 및 로그인 처리 로직
     function handleLogin() {
       const email = document.getElementById('loginEmail').value.trim();
       const pw = document.getElementById('loginPw').value.trim();
@@ -912,26 +908,24 @@
         return;
       }
 
-      // 회원가입된 정보가 아예 없는 경우
       if (!registeredUser) {
-        alert('등록된 회원 정보가 없습니다. 먼저 회원가입을 진행해 주세요!');
+        alert('존재하지 않는 이메일이거나 회원가입되지 않은 정보입니다.');
         switchLoginTab('signup');
         return;
       }
 
-      // 입력한 정보가 가입된 정보와 일치하는지 확인
       if (registeredUser.email !== email || registeredUser.pw !== pw) {
         alert('이메일 또는 비밀번호가 올바르지 않습니다.');
         return;
       }
 
       isLoggedIn = true;
+      hasCoupon = true; // 로그인 성공 시 쿠폰 권한 부여
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
       alert(`환영합니다, ${registeredUser.name}님! 성공적으로 로그인되었습니다.`);
       closeModal('loginModal');
     }
 
-    // [수정됨] 회원가입 시 정보 저장 로직
     function handleSignup() {
       const name = document.getElementById('signupName').value.trim();
       const email = document.getElementById('signupEmail').value.trim();
@@ -942,7 +936,6 @@
         return;
       }
 
-      // 회원 정보 저장
       registeredUser = { name, email, pw };
 
       isLoggedIn = true;
@@ -955,11 +948,23 @@
     function handleSnsLogin(provider) {
       isLoggedIn = true;
       hasCoupon = true;
-      // 소셜 로그인 시에도 가상 정보 저장
       registeredUser = { name: `${provider}회원`, email: `social@${provider.toLowerCase()}.com`, pw: 'social123' };
       document.getElementById('loginHeaderBtn').innerText = 'MY페이지';
       alert(`🎉 ${provider} 계정으로 로그인 되었습니다.\n[신규 가입 10% 할인 쿠폰]이 발급되었습니다.`);
       closeModal('loginModal');
+    }
+
+    // [추가됨] 쿠폰 사용 시 로그인 및 쿠폰 소유 여부 검증 함수
+    function checkCouponValidation(event) {
+      if (!isLoggedIn || !hasCoupon) {
+        // 조건 불충족 시 체크박스 선택 취소
+        event.target.checked = false;
+        alert('❌ 로그인이 필요하거나 발급된 쿠폰이 없습니다. 로그인 후 사용해 주세요.');
+        
+        // 로그인 모달 띄우기
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal) loginModal.style.setProperty('display', 'flex', 'important');
+      }
     }
 
     function generateRecipeCards(selectedWorries) {
